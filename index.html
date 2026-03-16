@@ -17,8 +17,8 @@
     <body>
         
     <section id="header">
-        <a href="#"><img src="image/logo3.png" height="70" class="logo"</a>
-        <div>
+        <a href="#"><img src="image/logo3.png" height="70" class="logo"></a>
+        <div>x
             <ul id="navbar">
                 <li><a class="active" href="index.html">Home</a></li>
                 <li><a href="shop.html">Shop</a></li>
@@ -52,7 +52,6 @@
         </div>
         <div class="fe-box">
             <img src="image/features/promotion.png" alt="">
-            <h6>Promotions</h6>
         </div>
         <div class="fe-box">
             <img src="image/features/sell.jpg" alt="">
@@ -63,12 +62,54 @@
             <h6>F24/7 Support</h6>
         </div>
     </section>
-        <section id="product1" class="section-p1">
-            <h2>Featured Products</h2>
-            <p>Summer Collection New Modern Design</p>
-            <div class="pro-container" id="productContainer"></div>
+       <section id="product1" class="section-p1">
+    <h2>Featured Products</h2>
+    <p>Summer Collection New Modern Design</p>
+
+    <div class="pro-container" id="productContainer"></div>
+
+</section>
+<script src="script.js"></script>
+
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox">
+    <span class="close">&times;</span>
+    <div class="lightbox-content">
+        <!-- Left side - Image section -->
+        <div class="image-section">
+            <img class="lightbox-img" id="lightbox-img">
             
-        </section>
-    <script src="script.js"></script>
+            <!-- Navigation buttons -->
+            <button class="lightbox-prev">&#10094;</button>
+            <button class="lightbox-next">&#10095;</button>
+            
+            <!-- Image counter -->
+            <div class="lightbox-counter" id="lightbox-counter">1 / 5</div>
+            
+            <!-- Thumbnails container -->
+            <div class="thumbnail-container" id="thumbnail-container"></div>
+        </div>
+
+        <!-- Right side - Product details section -->
+        <div class="details-section">
+            <div class="product-title" id="product-title"></div>
+            <div class="product-category" id="product-category"></div>
+            
+            <div class="rating-section">
+                <div class="stars" id="product-stars"></div>
+                <div class="rating-count" id="product-rating"></div>
+            </div>
+            
+            <div class="product-description" id="product-description"></div>
+            
+            <div class="product-price" id="product-price"></div>
+            
+            <div class="stock-status" id="product-stock"></div>
+            
+            <button class="add-to-cart-btn">Add to Cart</button>
+        </div>
+    </div>
+</div>
     </body>
     </html>
