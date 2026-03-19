@@ -1,4 +1,4 @@
-// Get multiple clothing categories
+// Get multiple clothing Catagories
 Promise.all([
     fetch("https://dummyjson.com/products/category/mens-shirts?limit=10").then(res => res.json()),
     fetch("https://dummyjson.com/products/category/womens-dresses?limit=10").then(res => res.json()),
