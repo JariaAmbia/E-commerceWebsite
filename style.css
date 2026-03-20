@@ -8,13 +8,13 @@ body{
 
 h1{
     font-size: 50px;
-    line-height: 64px;
+    line-height: 56px;
     color:#222;
 }
 
 h2{
     font-size: 46px;
-    line-height: 54px;
+    line-height: 50px;
     color:#222;
 }
 
@@ -40,6 +40,20 @@ p{
 
 .section-m1{
     margin: 40px 0;
+}
+button.normal{
+    font: size 14px;
+    font-weight: 600;
+    padding: 15px 30px;
+    color: #000;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transform: .2s;
+
+
 }
 body{
     width: 100%;
@@ -510,4 +524,40 @@ body{
 .thumbnail-container::-webkit-scrollbar-thumb {
     background: #ccc;
     border-radius: 5px;
+}
+#banner {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:flex-start;
+    text-align:left;
+    padding-left: 50px;
+    background-image:url("image/b2.png") ;
+    width: 100%;
+    height: 40vh;
+    background-size: cover;
+    background-position: center;
+}
+#banner h4{
+    color: #cce7d0;
+    font-size: 16px;
+}
+#banner h2{
+    color: #cce7d0;
+    font-size: 30px;
+    padding: 10px 0;
+}
+#banner h2 span{
+    color:#e74c3c;
+    
+}
+#banner h2,
+#banner h4 {
+  margin: 0;
+  line-height: 1.2;
+}
+#banner button:hover{
+    background: #088178;
+    color: #fff;
+    
 }
