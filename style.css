@@ -115,6 +115,16 @@ body{
     bottom: -4px;
     left: 20px;
 }
+
+#mobile{
+    display: none;
+    align-items: center;
+}
+#close{
+    display: none;
+}
+
+
 #hero{
     background-color: #e3e6f3fa; 
     
@@ -226,7 +236,7 @@ body{
     font-size: 26px;
 }
 #product1 .pro,
-#product1 .pro{
+#product2 .pro{
     width:22%;
     min-width: 250px;
     padding: 10px 12px;
@@ -775,4 +785,139 @@ footer .follow img:hover{
 }
 footer a:hover{
     color: #088178;
+}
+
+@media (max-width:799px){
+    .section-p1 {
+    padding: 40px 40px;
+}
+    #navbar {
+    display: flex;
+    flex-direction: column;
+    align-items:flex-start;
+    justify-content:flex-start;
+    position:fixed;
+    top: 0;
+    right: -300px;
+    height: 100vh;
+    width: 300px;
+    background-color: #E3E6F3;
+    box-shadow: 0 40px 60px rgb(0,0, 0,0.1);
+    padding: 80px 0 0 10px;
+    transition: 0.3s;  
+} 
+ #navbar.active{
+    right:0px;
+
+ }
+ #navbar li{
+    margin-bottom: 25px;
+ }
+ #mobile{
+    display:flex;
+    align-items: center;
+}
+ #mobile img:hover{
+    transform: scale(1.2);
+    transition: 0.3s;
+    font-size: 24px;
+    padding-left: 20px;
+ }
+ #close{
+    display: initial;
+    position:absolute;
+    top: 30px;
+    left: 30px;
+    color: #222;
+    font-size: 24px;
+ }
+ #lg-bag{
+    display: none;
+ }
+ #hero {
+    
+    height: 70vh;
+    padding: 0px 80px;
+    background-position: top 30% right 20%;
+    
+}
+#feature {
+    justify-content:center;
+}
+#feature .fe-box {
+    
+    margin: 15px 15px;
+}
+#product1 .pro-container, #product2 .pro-container {
+    justify-content:center;
+}
+#product1 .pro, #product1 .pro {
+    margin: 15px;
+}
+#banner {
+    height: 20vh;
+    
+}
+#sm-banner .banner-box {
+    min-width: 100%;
+    height: 40vh;
+    background-size: cover;
+    background-position: center;
+}
+#banner3 {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 15px;
+    padding: 0 40px;
+}
+#banner3 .banner-box {
+ width: 32%;  
+}
+}
+
+@media(max-width:477px){
+    .section-p1 {
+    padding: 20px;
+}
+    #header {
+    padding: 10px 30px;
+}
+#hero {
+    padding: 0px 20px;
+    background-position: 55%;
+}
+h1 {
+    font-size: 38px;
+}
+h2 {
+    font-size: 32px;
+}
+#feature {
+    justify-content: space-between;
+}
+#feature .fe-box {
+    width: 150px;
+    margin: 0 0 15px 0;
+}
+#product1 .pro, #product2 .pro {
+    width: 100%;
+    
+}
+#sm-banner .banner-box2 {
+ margin-top: 20px;   
+}
+#banner3 {
+    padding: 0 20px;
+}
+#banner3 .banner-box{
+    width:100%;
+}
+#newsletter {
+    padding:40px 20px;
+}
+#newsletter .form {
+    display: flex;
+    width: 100%;
+}
 }
