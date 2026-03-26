@@ -1,3 +1,4 @@
+
 // Get multiple clothing Catagories
 Promise.all([
     fetch("https://dummyjson.com/products/category/mens-shirts?limit=10").then(res => res.json()),
@@ -8,6 +9,7 @@ Promise.all([
 .then(([shirts, dresses, shoes, womensShoes]) => {
      const container = document.getElementById("productContainer");
     container.innerHTML = '';
+
     const newArrivalsContainer = document.getElementById("newArrivalsContainer");
 
     function addNewArrivals(products) {
@@ -27,9 +29,6 @@ Promise.all([
             });
         }
     }
-    //const container = document.getElementById("productContainer");
-    //container.innerHTML = '';
-
     // Helper function to add products
     function addCategoryProducts(products, categoryName) {
         if (products.length > 0) {

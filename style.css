@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Spartan:wgth@100;200;300;400;500;600;700;800;900$display=swap');
 body{
     margin:0;
@@ -748,10 +749,9 @@ footer .copyright{
 }
 /* Shop page */
 #page-header{
-    background-image: url("image/10.png");
+    background-image: url("image/b3.png");
     width: 100%;
-    height:40vh;
-    background-color: red;
+    height:100vh;
     background-size: cover;
     display: flex;
     justify-content:center;
