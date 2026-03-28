@@ -6,8 +6,29 @@ Promise.all([
     fetch("https://dummyjson.com/products/category/womens-shoes?limit=10").then(res => res.json())
 ])
 .then(([shirts, dresses, shoes, womensShoes]) => {
-    const container = document.getElementById("productContainer");
+     const container = document.getElementById("productContainer");
     container.innerHTML = '';
+    const newArrivalsContainer = document.getElementById("newArrivalsContainer");
+
+    function addNewArrivals(products) {
+        if (newArrivalsContainer && products.length > 0) {
+            products.forEach(product => {
+                const productCard = `
+                <div class="pro">
+                    <img src="${product.thumbnail}" class="product-image">
+                    <div class="des">
+                        <span>${product.category}</span>
+                        <h5>${product.title}</h5>
+                        <h4>$${product.price}</h4>
+                    </div>
+                </div>
+                `;
+                newArrivalsContainer.innerHTML += productCard;
+            });
+        }
+    }
+    //const container = document.getElementById("productContainer");
+    //container.innerHTML = '';
 
     // Helper function to add products
     function addCategoryProducts(products, categoryName) {
@@ -25,7 +46,7 @@ Promise.all([
 
                 const productCard = `
                 <div class="pro">
-                    <img src="${product.images[0]}" alt="${product.title}" class="product-image">
+                    <img src="${product.thumbnail}" alt="${product.title}" class="product-image">
                     <div class="des">
                         <span>${displayCategory}</span>
                         <h5>${product.title}</h5>
@@ -51,6 +72,9 @@ Promise.all([
     addCategoryProducts(dresses.products, "Women's Dresses");
     addCategoryProducts(shoes.products, "Men's Shoes");
     addCategoryProducts(womensShoes.products, "Women's Shoes");
+    // NEW ARRIVALS call
+addNewArrivals(shirts.products.slice(0,4));
+addNewArrivals(dresses.products.slice(0,4));
 })
 .catch(error => {
     console.error('Error fetching products:', error);
