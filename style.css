@@ -1,9 +1,10 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Spartan:wgth@100;200;300;400;500;600;700;800;900$display=swap');
 body{
     margin:0;
     padding:0;
     box-sizing: border-box;
-    font-size: 'Spartan',sans-serif;
+    font-family: 'Spartan',sans-serif;
 }
 
 h1{
@@ -42,7 +43,7 @@ p{
     margin: 40px 0;
 }
 button.normal{
-    font: size 14px;
+    font-size: 14px;
     font-weight: 600;
     padding: 15px 30px;
     color: #000;
@@ -55,7 +56,7 @@ button.normal{
 }
 
 button.white{
-    font: size 13px;
+    font-size: 13px;
     font-weight: 600;
     padding: 11px 18px;
     color: #fff;
@@ -74,8 +75,8 @@ body{
     align-items: center;
     justify-content: space-between;
     padding: 10px 80px;
-    background:#e3e6f3fa ;
-    box-shadow: 0,5px,15px rgba(0, 0, 0, 0.06);
+    background: rgba(227, 230, 243, 0.98);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
     z-index: 999;
     position:sticky;
     top: 0;
@@ -95,7 +96,7 @@ body{
 
 #navbar li a{
     text-decoration: none;
-    font: size 16px;
+    font-size: 16px;
     font-weight: 600;
     color: #1a1a1a;
     transition: 0.3s ease;
@@ -746,6 +747,36 @@ footer .copyright{
     width: 100%;
     text-align: center;
 }
+/* Shop page */
+#page-header{
+    background-image: url("image/b3.png");
+    width: 100%;
+    height:100vh;
+    background-size: cover;
+    display: flex;
+    justify-content:center;
+    text-align:center;
+    flex-direction: column;
+    padding: 14px;
+
+}
+#page-header h2,
+#page-header p{
+    color:#fff;
+}
+#pagination{
+    text-align: center;
+}
+
+#pagination a{
+    text-decoration:none;
+    background-color: #088178;
+    padding: 15px 20px;
+    border-radius:4px;
+    color:#fff;
+    font-weight: 600;
+}
+
 footer .logo{
     margin-bottom: 30px;
 }
