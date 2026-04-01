@@ -1,5 +1,4 @@
-
-// Get multiple clothing Catagories
+// Get multiple clothing categories
 Promise.all([
     fetch("https://dummyjson.com/products/category/mens-shirts?limit=10").then(res => res.json()),
     fetch("https://dummyjson.com/products/category/womens-dresses?limit=10").then(res => res.json()),
@@ -7,73 +6,53 @@ Promise.all([
     fetch("https://dummyjson.com/products/category/womens-shoes?limit=10").then(res => res.json())
 ])
 .then(([shirts, dresses, shoes, womensShoes]) => {
-     const container = document.getElementById("productContainer");
+    const container = document.getElementById("productContainer"); // Kept as productContainer
     container.innerHTML = '';
 
-    const newArrivalsContainer = document.getElementById("newArrivalsContainer");
+    // Take only 4 items from each category
+    const shirtsProducts = shirts.products.slice(0, 4);
+    const dressesProducts = dresses.products.slice(0, 4);
+    const shoesProducts = shoes.products.slice(0, 4);
+    const womensShoesProducts = womensShoes.products.slice(0, 4);
+    
+    // Combine all products
+    const allProducts = [
+        ...shirtsProducts,
+        ...dressesProducts,
+        ...shoesProducts,
+        ...womensShoesProducts
+    ];
+    
+    // Display all products without category headings
+    allProducts.forEach(product => {
+        // Format category name for display
+        let displayCategory = product.category;
+        if (product.category === 'mens-shirts') displayCategory = "Men's Shirts";
+        else if (product.category === 'mens-shoes') displayCategory = "Men's Shoes";
+        else if (product.category === 'womens-dresses') displayCategory = "Women's Dresses";
+        else if (product.category === 'womens-shoes') displayCategory = "Women's Shoes";
 
-    function addNewArrivals(products) {
-        if (newArrivalsContainer && products.length > 0) {
-            products.forEach(product => {
-                const productCard = `
-                <div class="pro">
-                    <img src="${product.thumbnail}" class="product-image">
-                    <div class="des">
-                        <span>${product.category}</span>
-                        <h5>${product.title}</h5>
-                        <h4>$${product.price}</h4>
-                    </div>
+        const productCard = `
+        <div class="pro">
+            <img src="${product.images[0]}" alt="${product.title}" class="product-image">
+            <div class="des">
+                <span>${displayCategory}</span>
+                <h5>${product.title}</h5>
+                <div class="star">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                 </div>
-                `;
-                newArrivalsContainer.innerHTML += productCard;
-            });
-        }
-    }
-    // Helper function to add products
-    function addCategoryProducts(products, categoryName) {
-        if (products.length > 0) {
-            // Add category heading
-            container.innerHTML += `<h3 class="category-heading">${categoryName}</h3>`;
-            
-            // Add products in this category
-            products.forEach(product => {
-                let displayCategory = product.category;
-                if (product.category === 'mens-shirts') displayCategory = "Men's Shirts";
-                else if (product.category === 'mens-shoes') displayCategory = "Men's Shoes";
-                else if (product.category === 'womens-dresses') displayCategory = "Women's Dresses";
-                else if (product.category === 'womens-shoes') displayCategory = "Women's Shoes";
-
-                const productCard = `
-                <div class="pro">
-                    <img src="${product.thumbnail}" alt="${product.title}" class="product-image">
-                    <div class="des">
-                        <span>${displayCategory}</span>
-                        <h5>${product.title}</h5>
-                        <div class="star">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <h4>$${product.price}</h4>
-                        <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
-                    </div>
-                </div>
-                `;
-                container.innerHTML += productCard;
-            });
-        }
-    }
-
-    // Add categories in the order you want
-    addCategoryProducts(shirts.products, "Men's Shirts");
-    addCategoryProducts(dresses.products, "Women's Dresses");
-    addCategoryProducts(shoes.products, "Men's Shoes");
-    addCategoryProducts(womensShoes.products, "Women's Shoes");
-    // NEW ARRIVALS call
-addNewArrivals(shirts.products.slice(0,4));
-addNewArrivals(dresses.products.slice(0,4));
+                <h4>$${product.price}</h4>
+                <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
+            </div>
+        </div>
+        `;
+        
+        container.innerHTML += productCard;
+    });
 })
 .catch(error => {
     console.error('Error fetching products:', error);
@@ -82,7 +61,6 @@ addNewArrivals(dresses.products.slice(0,4));
         container.innerHTML = '<p style="color: red;">Sorry, failed to load products. Please try again later.</p>';
     }
 });
-
 // Lightbox functionality with product details
 document.addEventListener('DOMContentLoaded', function() {
     const lightbox = document.getElementById("lightbox");
@@ -245,6 +223,89 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-});// Many types item are added in this ConvolverNode
-// What do you need from here
-// new comment added
+});
+// Wait for HTML to load
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Fetch clothes from API
+    fetch("https://fakestoreapi.com/products/category/women's%20clothing")
+    .then(res => res.json())
+    .then(womenClothes => {
+        
+        fetch("https://fakestoreapi.com/products/category/men's%20clothing")
+        .then(res => res.json())
+        .then(menClothes => {
+            
+            // Combine both categories
+            const allClothes = [...womenClothes, ...menClothes];
+            
+            // Take first 8 items
+            const selected = allClothes.slice(0, 8);
+            
+            const container = document.getElementById("newArrivalsContainer");
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Display products
+            selected.forEach(product => {
+                
+                // Generate star rating
+                const rating = Math.round(product.rating.rate);
+                let stars = '';
+                for(let i = 1; i <= 5; i++) {
+                    if(i <= rating) {
+                        stars += '<i class="fas fa-star"></i>';
+                    } else {
+                        stars += '<i class="far fa-star"></i>';
+                    }
+                }
+                
+                const productCard = `
+                <div class="pro">
+                    <img src="${product.image}" alt="${product.title}">
+                    <div class="des">
+                        <span>${product.category}</span>
+                        <h5>${product.title.substring(0, 30)}${product.title.length > 30 ? '...' : ''}</h5>
+                        <div class="star">
+                            ${stars}
+                        </div>
+                        <h4>$${product.price}</h4>
+                        <a href="#" class="cart"><i class="fa-solid fa-cart-shopping"></i></a>
+                    </div>
+                </div>
+                `;
+                
+                container.innerHTML += productCard;
+            });
+            
+            console.log("Products loaded successfully!");
+        })
+        .catch(error => {
+            console.error("Error loading men's clothes:", error);
+        });
+        
+    })
+    .catch(error => {
+        console.error("Error loading women's clothes:", error);
+        
+        // Fallback products if API fails
+        const container = document.getElementById("newArrivalsContainer");
+        container.innerHTML = '<p style="color: red; text-align: center;">Failed to load products. Please try again later.</p>';
+    });
+
+});
+
+const bar=document.getElementById('bar');
+const close=document.getElementById('close');
+const nav=document.getElementById('navbar');
+if(bar){
+    bar.addEventListener('click',()=>{
+        nav.classList.add('active');
+    })
+}
+if(close){
+    close.addEventListener('click',()=>{
+        nav.classList.remove('active');
+    })
+}
