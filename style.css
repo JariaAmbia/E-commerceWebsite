@@ -776,6 +776,36 @@ footer .copyright{
     color:#fff;
     font-weight: 600;
 }
+/* Color Options for Lightbox */
+.color-options-section {
+    margin: 15px 0;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.color-options-section strong {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.color-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.color-container span {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.color-container span:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px #088178;
+}
 
 footer .logo{
     margin-bottom: 30px;
@@ -952,4 +982,42 @@ h2 {
     display: flex;
     width: 100%;
 }
+}
+.product-colors {
+    margin: 10px 0;
+    display: flex;
+    gap: 8px;
+}
+
+.color-dot {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
+
+.color-dot:hover {
+    transform: scale(1.1);
+    border-color: #333;
+}
+.pro {
+    position: relative;
+    overflow: hidden;
+}
+
+.color-overlay {
+    mix-blend-mode: color;
+    animation: fadeOut 0.5s ease forwards;
+    border-radius: 20px;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+}
+
+.product-image {
+    transition: filter 0.3s ease, transform 0.2s ease;
 }

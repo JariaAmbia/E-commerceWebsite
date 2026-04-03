@@ -1,19 +1,24 @@
 // Get multiple clothing categories
 Promise.all([
     fetch("https://dummyjson.com/products/category/mens-shirts?limit=10").then(res => res.json()),
-    fetch("https://dummyjson.com/products/category/womens-dresses?limit=10").then(res => res.json()),
+    fetch("https://dummyjson.com/products/category/womens-dresses?limit=10").catch(() => ({products: []})),
     fetch("https://dummyjson.com/products/category/mens-shoes?limit=10").then(res => res.json()),
     fetch("https://dummyjson.com/products/category/womens-shoes?limit=10").then(res => res.json())
 ])
+
 .then(([shirts, dresses, shoes, womensShoes]) => {
-    const container = document.getElementById("productContainer"); // Kept as productContainer
+    const container = document.getElementById("productContainer");
+    if (!container) {
+        console.error("productContainer element not found!");
+        return;
+    }
     container.innerHTML = '';
 
     // Take only 4 items from each category
-    const shirtsProducts = shirts.products.slice(0, 4);
-    const dressesProducts = dresses.products.slice(0, 4);
-    const shoesProducts = shoes.products.slice(0, 4);
-    const womensShoesProducts = womensShoes.products.slice(0, 4);
+    const shirtsProducts = shirts.products?.slice(0, 4) || [];
+    const dressesProducts = dresses.products?.slice(0, 4) || [];
+    const shoesProducts = shoes.products?.slice(0, 4) || [];
+    const womensShoesProducts = womensShoes.products?.slice(0, 4) || [];
     
     // Combine all products
     const allProducts = [
@@ -25,34 +30,59 @@ Promise.all([
     
     // Display all products without category headings
     allProducts.forEach(product => {
-        // Format category name for display
-        let displayCategory = product.category;
-        if (product.category === 'mens-shirts') displayCategory = "Men's Shirts";
-        else if (product.category === 'mens-shoes') displayCategory = "Men's Shoes";
-        else if (product.category === 'womens-dresses') displayCategory = "Women's Dresses";
-        else if (product.category === 'womens-shoes') displayCategory = "Women's Shoes";
+    // Check if we are on shop page by URL
+    const isShopPage = window.location.pathname.includes('shop.html');
+    
+    // Assign colors based on product category (ONLY for shop page)
+    let productColors = [];
+    let showColors = isShopPage; 
+    
+    if (showColors) {
+        if (product.category === 'mens-shirts') {
+            productColors = ["green", "yellow", "orange", "red"];
+        } else if (product.category === 'womens-dresses') {
+            productColors = ["pink", "purple", "blue", "yellow"];
+        } else if (product.category === 'mens-shoes') {
+            productColors = ["black", "brown", "white", "blue"];
+        } else if (product.category === 'womens-shoes') {
+            productColors = ["red", "black", "gold", "silver"];
+        } else {
+            productColors = ["green", "blue", "red", "yellow"];
+        }
+    }
+    
+    // Format category name for display
+    let displayCategory = product.category;
+    if (product.category === 'mens-shirts') displayCategory = "Men's Shirts";
+    else if (product.category === 'mens-shoes') displayCategory = "Men's Shoes";
+    else if (product.category === 'womens-dresses') displayCategory = "Women's Dresses";
+    else if (product.category === 'womens-shoes') displayCategory = "Women's Shoes";
 
-        const productCard = `
-        <div class="pro">
-            <img src="${product.images[0]}" alt="${product.title}" class="product-image">
-            <div class="des">
-                <span>${displayCategory}</span>
-                <h5>${product.title}</h5>
-                <div class="star">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-                <h4>$${product.price}</h4>
-                <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
-            </div>
-        </div>
-        `;
+    const productCard = `
+    <div class="pro">
+        <img src="${product.images[0]}" alt="${product.title}" class="product-image">
         
-        container.innerHTML += productCard;
-    });
+        <div class="des">
+            <span>${displayCategory}</span>
+            <h5>${product.title}</h5>
+            <div class="star">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+            <h4>$${product.price}</h4>
+            ${showColors ? `<div class="product-colors">
+                ${productColors.map(color => `<span class="color-dot" style="background-color: ${color};"></span>`).join('')}
+            </div>` : ''}
+            <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
+        </div>
+    </div>
+    `;
+    
+    container.innerHTML += productCard;
+});
 })
 .catch(error => {
     console.error('Error fetching products:', error);
@@ -116,6 +146,46 @@ document.addEventListener('DOMContentLoaded', function() {
             lightbox.style.display = "block";
         }
     });
+    
+    // ========== COLOR CLICK - ONLY FOR SHOP PAGE ==========
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('color-dot')) {
+        // Check URL to see if we're on shop page
+        const isShopPage = window.location.pathname.includes('shop.html') || 
+                          window.location.href.includes('shop.html');
+        
+        // If on home page, do nothing (just visual feedback)
+        if (!isShopPage) {
+            // Just show a small animation on home page, no image change
+            e.target.style.transform = 'scale(1.2)';
+            setTimeout(() => e.target.style.transform = '', 200);
+            return;
+        }
+        
+        // Shop page er jonno image change code
+        const productDiv = e.target.closest('.pro');
+        const productImg = productDiv.querySelector('.product-image');
+        
+        let currentSrc = productImg.src;
+        let match = currentSrc.match(/\/(\d+)\.webp$/);
+        
+        if (match) {
+            let currentIndex = parseInt(match[1]);
+            let nextIndex = (currentIndex % 4) + 1;
+            let newSrc = currentSrc.replace(`/${currentIndex}.webp`, `/${nextIndex}.webp`);
+            
+            productImg.style.opacity = '0.5';
+            setTimeout(() => {
+                productImg.src = newSrc;
+                productImg.style.opacity = '1';
+            }, 150);
+        } else {
+            productImg.style.transform = 'scale(0.95)';
+            setTimeout(() => productImg.style.transform = '', 200);
+        }
+    }
+});
+
 
     function showImage(index) {
         if (currentImages.length > 0) {
