@@ -1,11 +1,10 @@
-// Get multiple clothing categories
+// ========== SECTION 1: FEATURED PRODUCTS (4 items per category) ==========
 Promise.all([
     fetch("https://dummyjson.com/products/category/mens-shirts?limit=10").then(res => res.json()),
     fetch("https://dummyjson.com/products/category/womens-dresses?limit=10").catch(() => ({products: []})),
     fetch("https://dummyjson.com/products/category/mens-shoes?limit=10").then(res => res.json()),
     fetch("https://dummyjson.com/products/category/womens-shoes?limit=10").then(res => res.json())
 ])
-
 .then(([shirts, dresses, shoes, womensShoes]) => {
     const container = document.getElementById("productContainer");
     if (!container) {
@@ -28,61 +27,57 @@ Promise.all([
         ...womensShoesProducts
     ];
     
-    // Display all products without category headings
+    // Display all products
     allProducts.forEach(product => {
-    // Check if we are on shop page by URL
-    const isShopPage = window.location.pathname.includes('shop.html');
-    
-    // Assign colors based on product category (ONLY for shop page)
-    let productColors = [];
-    let showColors = isShopPage; 
-    
-    if (showColors) {
-        if (product.category === 'mens-shirts') {
-            productColors = ["green", "yellow", "orange", "red"];
-        } else if (product.category === 'womens-dresses') {
-            productColors = ["pink", "purple", "blue", "yellow"];
-        } else if (product.category === 'mens-shoes') {
-            productColors = ["black", "brown", "white", "blue"];
-        } else if (product.category === 'womens-shoes') {
-            productColors = ["red", "black", "gold", "silver"];
-        } else {
-            productColors = ["green", "blue", "red", "yellow"];
-        }
-    }
-    
-    // Format category name for display
-    let displayCategory = product.category;
-    if (product.category === 'mens-shirts') displayCategory = "Men's Shirts";
-    else if (product.category === 'mens-shoes') displayCategory = "Men's Shoes";
-    else if (product.category === 'womens-dresses') displayCategory = "Women's Dresses";
-    else if (product.category === 'womens-shoes') displayCategory = "Women's Shoes";
-
-    const productCard = `
-    <div class="pro">
-        <img src="${product.images[0]}" alt="${product.title}" class="product-image">
+        const isShopPage = window.location.pathname.includes('shop.html');
         
-        <div class="des">
-            <span>${displayCategory}</span>
-            <h5>${product.title}</h5>
-            <div class="star">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
+        let productColors = [];
+        let showColors = isShopPage;
+        
+        if (showColors) {
+            if (product.category === 'mens-shirts') {
+                productColors = ["green", "yellow", "orange", "red"];
+            } else if (product.category === 'womens-dresses') {
+                productColors = ["pink", "purple", "blue", "yellow"];
+            } else if (product.category === 'mens-shoes') {
+                productColors = ["black", "brown", "white", "blue"];
+            } else if (product.category === 'womens-shoes') {
+                productColors = ["red", "black", "gold", "silver"];
+            } else {
+                productColors = ["green", "blue", "red", "yellow"];
+            }
+        }
+        
+        let displayCategory = product.category;
+        if (product.category === 'mens-shirts') displayCategory = "Men's Shirts";
+        else if (product.category === 'mens-shoes') displayCategory = "Men's Shoes";
+        else if (product.category === 'womens-dresses') displayCategory = "Women's Dresses";
+        else if (product.category === 'womens-shoes') displayCategory = "Women's Shoes";
+
+        const productCard = `
+        <div class="pro">
+            <img src="${product.images[0]}" alt="${product.title}" class="product-image">
+            <div class="des">
+                <span>${displayCategory}</span>
+                <h5>${product.title}</h5>
+                <div class="star">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <h4>$${product.price}</h4>
+                ${showColors ? `<div class="product-colors">
+                    ${productColors.map(color => `<span class="color-dot" style="background-color: ${color};"></span>`).join('')}
+                </div>` : ''}
+                <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
             </div>
-            <h4>$${product.price}</h4>
-            ${showColors ? `<div class="product-colors">
-                ${productColors.map(color => `<span class="color-dot" style="background-color: ${color};"></span>`).join('')}
-            </div>` : ''}
-            <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
         </div>
-    </div>
-    `;
-    
-    container.innerHTML += productCard;
-});
+        `;
+        
+        container.innerHTML += productCard;
+    });
 })
 .catch(error => {
     console.error('Error fetching products:', error);
@@ -91,7 +86,83 @@ Promise.all([
         container.innerHTML = '<p style="color: red;">Sorry, failed to load products. Please try again later.</p>';
     }
 });
-// Lightbox functionality with product details
+
+// ========== SECTION 2: NEW ARRIVALS (8 products from NEW categories - Bags, Watches, Sunglasses, Jewelry) ==========
+document.addEventListener('DOMContentLoaded', function() {
+    // Get products from completely different categories
+    Promise.all([
+        fetch("https://dummyjson.com/products/category/womens-bags?limit=4").then(res => res.json()),
+        fetch("https://dummyjson.com/products/category/mens-watches?limit=4").then(res => res.json()),
+        fetch("https://dummyjson.com/products/category/sunglasses?limit=4").then(res => res.json()),
+        fetch("https://dummyjson.com/products/category/womens-jewellery?limit=4").then(res => res.json())
+    ])
+    .then(([bags, watches, sunglasses, jewellery]) => {
+        const container = document.getElementById("newArrivalsContainer");
+        if (!container) {
+            console.error("newArrivalsContainer element not found!");
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        // Take 2 from each category to get total 8 products
+        const allNewArrivals = [
+            ...(bags.products?.slice(0, 2) || []),
+            ...(watches.products?.slice(0, 2) || []),
+            ...(sunglasses.products?.slice(0, 2) || []),
+            ...(jewellery.products?.slice(0, 2) || [])
+        ];
+        
+        // Display products
+        allNewArrivals.forEach(product => {
+            // Generate star rating
+            const rating = Math.round(product.rating);
+            let stars = '';
+            for(let i = 1; i <= 5; i++) {
+                if(i <= rating) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
+            }
+            
+            // Format category name nicely
+            let categoryLabel = product.category;
+            if (product.category === 'womens-bags') categoryLabel = "Women's Bag";
+            else if (product.category === 'mens-watches') categoryLabel = "Men's Watch";
+            else if (product.category === 'sunglasses') categoryLabel = "Sunglasses";
+            else if (product.category === 'womens-jewellery') categoryLabel = "Jewelry";
+            
+            const productCard = `
+            <div class="pro">
+                <img src="${product.thumbnail}" alt="${product.title}" class="product-image">
+                <div class="des">
+                    <span>${categoryLabel}</span>
+                    <h5>${product.title.substring(0, 30)}${product.title.length > 30 ? '...' : ''}</h5>
+                    <div class="star">
+                        ${stars}
+                    </div>
+                    <h4>$${product.price}</h4>
+                    <a href="#" class="cart"><i class="fa-solid fa-cart-shopping"></i></a>
+                </div>
+            </div>
+            `;
+            
+            container.innerHTML += productCard;
+        });
+        
+        console.log(`New Arrivals loaded successfully! (${allNewArrivals.length} products from bags, watches, sunglasses, jewelry)`);
+    })
+    .catch(error => {
+        console.error("Error loading new arrivals:", error);
+        const container = document.getElementById("newArrivalsContainer");
+        if (container) {
+            container.innerHTML = '<p style="color: red; text-align: center;">Failed to load new arrivals. Please try again later.</p>';
+        }
+    });
+});
+
+// ========== LIGHTBOX FUNCTIONALITY ==========
 document.addEventListener('DOMContentLoaded', function() {
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
@@ -101,7 +172,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const counter = document.getElementById("lightbox-counter");
     const thumbnailContainer = document.getElementById("thumbnail-container");
     
-    // Product details elements
     const productTitle = document.getElementById("product-title");
     const productCategory = document.getElementById("product-category");
     const productDescription = document.getElementById("product-description");
@@ -114,27 +184,23 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentIndex = 0;
     let currentProduct = null;
 
-    // Open lightbox when clicking product image
     document.addEventListener("click", function(e) {
         if (e.target.classList.contains('product-image')) {
             const productDiv = e.target.closest('.pro');
             
-            // Get all product data from the div
             const title = productDiv.querySelector('h5').textContent;
             const category = productDiv.querySelector('.des span').textContent;
             const price = productDiv.querySelector('h4').textContent;
             
-            // Store current product data
             currentProduct = {
                 title: title,
                 category: category,
                 price: price,
-                description: "Premium quality product with excellent craftsmanship. Made from high-quality materials for long-lasting comfort and style. Perfect for any occasion.",
+                description: "Premium quality product with excellent craftsmanship. Made from high-quality materials for long-lasting comfort and style.",
                 rating: 4.5,
                 stock: Math.floor(Math.random() * 20) + 1
             };
             
-            // Get images
             const allImages = productDiv.querySelectorAll('img[src]');
             currentImages = [...new Set(Array.from(allImages).map(img => img.src))];
             
@@ -147,45 +213,40 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // ========== COLOR CLICK - ONLY FOR SHOP PAGE ==========
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('color-dot')) {
-        // Check URL to see if we're on shop page
-        const isShopPage = window.location.pathname.includes('shop.html') || 
-                          window.location.href.includes('shop.html');
-        
-        // If on home page, do nothing (just visual feedback)
-        if (!isShopPage) {
-            // Just show a small animation on home page, no image change
-            e.target.style.transform = 'scale(1.2)';
-            setTimeout(() => e.target.style.transform = '', 200);
-            return;
-        }
-        
-        // Shop page er jonno image change code
-        const productDiv = e.target.closest('.pro');
-        const productImg = productDiv.querySelector('.product-image');
-        
-        let currentSrc = productImg.src;
-        let match = currentSrc.match(/\/(\d+)\.webp$/);
-        
-        if (match) {
-            let currentIndex = parseInt(match[1]);
-            let nextIndex = (currentIndex % 4) + 1;
-            let newSrc = currentSrc.replace(`/${currentIndex}.webp`, `/${nextIndex}.webp`);
+    // Color dot click functionality
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('color-dot')) {
+            const isShopPage = window.location.pathname.includes('shop.html') || 
+                              window.location.href.includes('shop.html');
             
-            productImg.style.opacity = '0.5';
-            setTimeout(() => {
-                productImg.src = newSrc;
-                productImg.style.opacity = '1';
-            }, 150);
-        } else {
-            productImg.style.transform = 'scale(0.95)';
-            setTimeout(() => productImg.style.transform = '', 200);
+            if (!isShopPage) {
+                e.target.style.transform = 'scale(1.2)';
+                setTimeout(() => e.target.style.transform = '', 200);
+                return;
+            }
+            
+            const productDiv = e.target.closest('.pro');
+            const productImg = productDiv.querySelector('.product-image');
+            
+            let currentSrc = productImg.src;
+            let match = currentSrc.match(/\/(\d+)\.webp$/);
+            
+            if (match) {
+                let currentIndex = parseInt(match[1]);
+                let nextIndex = (currentIndex % 4) + 1;
+                let newSrc = currentSrc.replace(`/${currentIndex}.webp`, `/${nextIndex}.webp`);
+                
+                productImg.style.opacity = '0.5';
+                setTimeout(() => {
+                    productImg.src = newSrc;
+                    productImg.style.opacity = '1';
+                }, 150);
+            } else {
+                productImg.style.transform = 'scale(0.95)';
+                setTimeout(() => productImg.style.transform = '', 200);
+            }
         }
-    }
-});
-
+    });
 
     function showImage(index) {
         if (currentImages.length > 0) {
@@ -208,13 +269,10 @@ document.addEventListener('click', function(e) {
         productDescription.textContent = product.description;
         productPrice.textContent = product.price;
         
-        // Generate stars
         const stars = '★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
         productStars.textContent = stars;
-        
         productRating.textContent = `(${product.rating} stars)`;
         
-        // Stock status
         if (product.stock > 10) {
             productStock.textContent = `✓ In Stock (${product.stock} available)`;
             productStock.className = 'stock-status';
@@ -248,7 +306,6 @@ document.addEventListener('click', function(e) {
         });
     }
 
-    // Navigation buttons
     if (nextBtn) {
         nextBtn.onclick = function() {
             if (currentImages.length > 0) {
@@ -267,21 +324,18 @@ document.addEventListener('click', function(e) {
         };
     }
 
-    // Close button
     if (closeBtn) {
         closeBtn.onclick = function() {
             lightbox.style.display = "none";
         };
     }
 
-    // Click outside to close
     lightbox.onclick = function(e) {
         if (e.target === lightbox) {
             lightbox.style.display = "none";
         }
     };
 
-    // Keyboard navigation
     document.addEventListener('keydown', function(e) {
         if (lightbox.style.display === "block") {
             if (e.key === 'Escape') {
@@ -294,89 +348,19 @@ document.addEventListener('click', function(e) {
         }
     });
 });
-// Wait for HTML to load
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // Fetch clothes from API
-    fetch("https://fakestoreapi.com/products/category/women's%20clothing")
-    .then(res => res.json())
-    .then(womenClothes => {
-        
-        fetch("https://fakestoreapi.com/products/category/men's%20clothing")
-        .then(res => res.json())
-        .then(menClothes => {
-            
-            // Combine both categories
-            const allClothes = [...womenClothes, ...menClothes];
-            
-            // Take first 8 items
-            const selected = allClothes.slice(0, 8);
-            
-            const container = document.getElementById("newArrivalsContainer");
-            
-            // Clear container
-            container.innerHTML = '';
-            
-            // Display products
-            selected.forEach(product => {
-                
-                // Generate star rating
-                const rating = Math.round(product.rating.rate);
-                let stars = '';
-                for(let i = 1; i <= 5; i++) {
-                    if(i <= rating) {
-                        stars += '<i class="fas fa-star"></i>';
-                    } else {
-                        stars += '<i class="far fa-star"></i>';
-                    }
-                }
-                
-                const productCard = `
-                <div class="pro">
-                    <img src="${product.image}" alt="${product.title}">
-                    <div class="des">
-                        <span>${product.category}</span>
-                        <h5>${product.title.substring(0, 30)}${product.title.length > 30 ? '...' : ''}</h5>
-                        <div class="star">
-                            ${stars}
-                        </div>
-                        <h4>$${product.price}</h4>
-                        <a href="#" class="cart"><i class="fa-solid fa-cart-shopping"></i></a>
-                    </div>
-                </div>
-                `;
-                
-                container.innerHTML += productCard;
-            });
-            
-            console.log("Products loaded successfully!");
-        })
-        .catch(error => {
-            console.error("Error loading men's clothes:", error);
-        });
-        
-    })
-    .catch(error => {
-        console.error("Error loading women's clothes:", error);
-        
-        // Fallback products if API fails
-        const container = document.getElementById("newArrivalsContainer");
-        container.innerHTML = '<p style="color: red; text-align: center;">Failed to load products. Please try again later.</p>';
-    });
 
-});
+// ========== MOBILE MENU FUNCTIONALITY ==========
+const bar = document.getElementById('bar');
+const close = document.getElementById('close');
+const nav = document.getElementById('navbar');
 
-const bar=document.getElementById('bar');
-const close=document.getElementById('close');
-const nav=document.getElementById('navbar');
 if(bar){
-    bar.addEventListener('click',()=>{
+    bar.addEventListener('click', () => {
         nav.classList.add('active');
-    })
+    });
 }
 if(close){
-    close.addEventListener('click',()=>{
+    close.addEventListener('click', () => {
         nav.classList.remove('active');
-    })
+    });
 }
-
