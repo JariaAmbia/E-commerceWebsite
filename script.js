@@ -55,7 +55,8 @@ Promise.all([
         else if (product.category === 'womens-shoes') displayCategory = "Women's Shoes";
 
         const productCard = `
-        <div class="pro">
+       // <div class="pro">
+       <div class="pro" onclick="if(!event.target.classList.contains('color-dot')) window.location.href='sproduct.html?id=${product.id}'">
             <img src="${product.images[0]}" alt="${product.title}" class="product-image">
             <div class="des">
                 <span>${displayCategory}</span>
