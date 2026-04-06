@@ -55,9 +55,8 @@ Promise.all([
         else if (product.category === 'womens-shoes') displayCategory = "Women's Shoes";
 
         const productCard = `
-       // <div class="pro">
-       <div class="pro" onclick="if(!event.target.classList.contains('color-dot')) window.location.href='sproduct.html?id=${product.id}'">
-            <img src="${product.images[0]}" alt="${product.title}" class="product-image">
+            <div class="pro" id="product-${product.id}">
+           <img src="${product.images[0]}" alt="${product.title}" class="product-image">
             <div class="des">
                 <span>${displayCategory}</span>
                 <h5>${product.title}</h5>
@@ -69,9 +68,13 @@ Promise.all([
                     <i class="fas fa-star"></i>
                 </div>
                 <h4>$${product.price}</h4>
-                ${showColors ? `<div class="product-colors">
-                    ${productColors.map(color => `<span class="color-dot" style="background-color: ${color};"></span>`).join('')}
-                </div>` : ''}
+                ${showColors ? `
+<div class="product-rotate">
+    <span class="rotate-btn" title="View more angles">
+        <i class="fa-solid fa-rotate"></i>
+    </span>
+</div>
+` : ''}
                 <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
             </div>
         </div>
@@ -215,10 +218,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Color dot click functionality
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('color-dot')) {
-            const isShopPage = window.location.pathname.includes('shop.html') || 
-                              window.location.href.includes('shop.html');
+   document.addEventListener('click', function(e) {
+    const rotateBtn = e.target.closest('.rotate-btn');
+    if (rotateBtn) {
+        const isShopPage = window.location.pathname.includes('shop.html') || 
+                          window.location.href.includes('shop.html');
             
             if (!isShopPage) {
                 e.target.style.transform = 'scale(1.2)';

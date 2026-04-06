@@ -778,37 +778,6 @@ footer .copyright{
 }
 
  
-/* Color Options for Lightbox */
-.color-options-section {
-    margin: 15px 0;
-    padding: 10px 0;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-}
-
-.color-options-section strong {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: #333;
-}
-
-.color-container {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.color-container span {
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.color-container span:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 2px #088178;
-}
-
 footer .logo{
     margin-bottom: 30px;
 }
@@ -1059,4 +1028,25 @@ outline: none;
 #prodetails .single-pro-details span{
    line-height: 25px;
 }
+.product-rotate {
+    margin-top: 8px;
+}
 
+.rotate-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #eee;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 16px;
+}
+
+.rotate-btn:hover {
+    background: #088178;
+    color: #fff;
+    transform: rotate(90deg);
+}
