@@ -1115,4 +1115,23 @@ outline: none;
     color: #fff;
     transform: rotate(90deg);
 }
+<<<<<<< HEAD
 
+=======
+/* About Us */
+
+#page-header.about-header{
+    background-image: url("image/About/Banner.png");
+}
+#page-header h2 {
+    font-size: 48px;
+    font-weight: 800; 
+    color: #1E1E1E; 
+    letter-spacing: 2px;
+}
+#page-header p {
+    font-size: 16px;
+    font-weight: 300;
+    color: #7A7A7A;
+}
+>>>>>>> 391a35908535a8bda244e0e5575deb7045573ba6
