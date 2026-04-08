@@ -792,8 +792,8 @@ background-image: url("image/blog-back.jpg");
 #blog {
     padding: 100px 100px 0 100px;
 img {
-  width: 220px;
-  height: 220px;
+  width: 300px;
+  height: 200px;
   object-fit: cover;
 }
 }
@@ -836,10 +836,10 @@ color:#088178;
     position:absolute;
     top:-40px;
     left:0;
-    font: size 60px;
+    font-size: 60px;
     font-weight: 600;
     color :#606063;
-    z-index: -8;
+    z-index: -9;
 }
 
  
@@ -1115,23 +1115,3 @@ outline: none;
     color: #fff;
     transform: rotate(90deg);
 }
-<<<<<<< HEAD
-
-=======
-/* About Us */
-
-#page-header.about-header{
-    background-image: url("image/About/Banner.png");
-}
-#page-header h2 {
-    font-size: 48px;
-    font-weight: 800; 
-    color: #1E1E1E; 
-    letter-spacing: 2px;
-}
-#page-header p {
-    font-size: 16px;
-    font-weight: 300;
-    color: #7A7A7A;
-}
->>>>>>> 391a35908535a8bda244e0e5575deb7045573ba6
