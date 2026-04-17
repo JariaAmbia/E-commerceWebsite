@@ -818,10 +818,15 @@ footer .follow img:hover{
 footer a:hover{
     color: #088178;
 }
+/*About page*/
+#page-header.about-header{
+background-image:url("image/About/IM2.png");
+}
 
 @media (max-width:799px){
     .section-p1 {
     padding: 40px 40px;
+    
 }
     #navbar {
     display: flex;
