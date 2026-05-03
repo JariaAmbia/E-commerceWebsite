@@ -1364,3 +1364,46 @@ text-align: center;
   font-size: 16px;
   padding: 0 25px;
 }
+/*Contact*/
+
+#contact-banner {
+  height: 50vh;
+  width: 100%;
+  background-image: url("image/contact/img1.png"); 
+  background-position: center;
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  color: white;
+}
+
+/* dark overlay */
+.contact-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+}
+
+/* text */
+.contact-content {
+  position: relative;
+  z-index: 2;
+}
+
+.contact-content h1 {
+  font-size: 70px;
+  font-weight: 200;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+}
+
+.contact-content p {
+  font-size: 18px;
+  letter-spacing: 2px;
+  margin-top: 10px;
+}
+/*Contact-Details*/
