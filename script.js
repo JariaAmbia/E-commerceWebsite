@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ========== LIGHTBOX WITH RELATED PRODUCTS (Option B) ==========
+// ========== LIGHTBOX WITH RELATED PRODUCTS (Fixed - Shows clicked product first) ==========
 document.addEventListener('DOMContentLoaded', function() {
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
@@ -197,24 +197,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const productRating = document.getElementById("product-rating");
     const productStock = document.getElementById("product-stock");
     
-    let currentRelatedProducts = [];  // Other products from same category (for thumbnails)
-    let currentProductImages = [];    // Different angles of current product (for rotate button)
+    let currentRelatedProducts = [];  // Other products from same category
+    let currentProductImages = [];    // Different angles of current product
     let currentIndex = 0;             // Index in related products
     let currentRotateIndex = 0;       // Index in product angles
-    let currentProductData = null;
 
     // Open lightbox when clicking product image
     document.addEventListener("click", function(e) {
         if (e.target.classList.contains('product-image')) {
             const productDiv = e.target.closest('.pro');
             
-            // Get current product info
-            const title = productDiv.querySelector('h5').textContent;
-            const category = productDiv.querySelector('.des span').textContent;
-            const price = productDiv.querySelector('h4').textContent;
-            const productId = parseInt(productDiv.id.replace('product-', ''));
+            // Get clicked product info
+            const clickedTitle = productDiv.querySelector('h5').textContent;
+            const clickedCategory = productDiv.querySelector('.des span').textContent;
+            const clickedPrice = productDiv.querySelector('h4').textContent;
+            const clickedProductId = parseInt(productDiv.id.replace('product-', ''));
             
-            // Get current product's multi-angle images (for rotate button)
+            // Get clicked product's multi-angle images (for rotate button)
             const hiddenContainer = productDiv.querySelector('.product-all-images');
             if (hiddenContainer) {
                 const hiddenImages = hiddenContainer.querySelectorAll('img');
@@ -224,44 +223,38 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Determine which category this product belongs to
             let productCategoryKey = '';
-            if (category.includes("Men's Shirts")) productCategoryKey = 'mens-shirts';
-            else if (category.includes("Women's Dresses")) productCategoryKey = 'womens-dresses';
-            else if (category.includes("Men's Shoes")) productCategoryKey = 'mens-shoes';
-            else if (category.includes("Women's Shoes")) productCategoryKey = 'womens-shoes';
+            if (clickedCategory.includes("Men's Shirts")) productCategoryKey = 'mens-shirts';
+            else if (clickedCategory.includes("Women's Dresses")) productCategoryKey = 'womens-dresses';
+            else if (clickedCategory.includes("Men's Shoes")) productCategoryKey = 'mens-shoes';
+            else if (clickedCategory.includes("Women's Shoes")) productCategoryKey = 'womens-shoes';
             
-            // Get related products from same category (excluding current product)
+            // Get all products from same category
             const allCategoryProducts = productsByCategory[productCategoryKey] || [];
-            currentRelatedProducts = allCategoryProducts.filter(p => p.id !== productId);
             
-            // Store current product data
-            currentProductData = {
-                id: productId,
-                title: title,
-                category: category,
-                price: price,
-                description: "Premium quality product with excellent craftsmanship.",
-                rating: 4.5,
-                stock: Math.floor(Math.random() * 20) + 1
-            };
+            // Create related products list (all products from same category)
+            currentRelatedProducts = [...allCategoryProducts];
             
-            // Display the first related product (or current if no related)
-            if (currentRelatedProducts.length > 0) {
-                showRelatedProduct(0);
-            } else {
-                showCurrentProduct();
-            }
+            // Find which index is the clicked product
+            currentIndex = currentRelatedProducts.findIndex(p => p.id === clickedProductId);
+            if (currentIndex === -1) currentIndex = 0;
+            
+            // Store current product data for reference
+            const currentProductData = currentRelatedProducts[currentIndex];
+            
+            // Display the clicked product
+            showProductInLightbox(currentIndex);
             
             lightbox.style.display = "block";
         }
     });
     
-    function showRelatedProduct(index) {
+    function showProductInLightbox(index) {
         if (index < 0 || index >= currentRelatedProducts.length) return;
         
         const product = currentRelatedProducts[index];
         currentIndex = index;
         
-        // Update display
+        // Update display with product data
         productTitle.textContent = product.title;
         productCategory.textContent = product.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         productDescription.textContent = "Premium quality product with excellent craftsmanship. Made from high-quality materials for long-lasting comfort and style.";
@@ -274,10 +267,10 @@ document.addEventListener('DOMContentLoaded', function() {
             lightboxImg.src = currentProductImages[0];
         }
         
-        // Update counter (showing related products count)
+        // Update counter
         counter.textContent = `${index + 1} / ${currentRelatedProducts.length}`;
         
-        // Stock status
+        // Stock status (random for demo)
         const stock = Math.floor(Math.random() * 20) + 1;
         if (stock > 10) {
             productStock.textContent = `✓ In Stock (${stock} available)`;
@@ -290,47 +283,14 @@ document.addEventListener('DOMContentLoaded', function() {
             productStock.className = 'stock-status out-stock';
         }
         
-        // Stars
-        const rating = 4.5;
+        // Stars (using product rating if available)
+        const rating = product.rating || 4.5;
         const stars = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
         productStars.textContent = stars;
         productRating.textContent = `(${rating} stars)`;
         
-        // Update thumbnails (showing related products)
+        // Update thumbnails
         updateThumbnails(index);
-    }
-    
-    function showCurrentProduct() {
-        productTitle.textContent = currentProductData.title;
-        productCategory.textContent = currentProductData.category;
-        productDescription.textContent = currentProductData.description;
-        productPrice.textContent = currentProductData.price;
-        
-        if (currentProductImages.length > 0) {
-            lightboxImg.src = currentProductImages[0];
-        }
-        
-        counter.textContent = `1 / 1`;
-        
-        if (currentProductData.stock > 10) {
-            productStock.textContent = `✓ In Stock (${currentProductData.stock} available)`;
-            productStock.className = 'stock-status';
-        } else if (currentProductData.stock > 0) {
-            productStock.textContent = `⚠ Only ${currentProductData.stock} left in stock`;
-            productStock.className = 'stock-status low-stock';
-        } else {
-            productStock.textContent = '✗ Out of Stock';
-            productStock.className = 'stock-status out-stock';
-        }
-        
-        const stars = '★'.repeat(Math.floor(currentProductData.rating)) + '☆'.repeat(5 - Math.floor(currentProductData.rating));
-        productStars.textContent = stars;
-        productRating.textContent = `(${currentProductData.rating} stars)`;
-        
-        // Clear thumbnails or show message
-        if (thumbnailContainer) {
-            thumbnailContainer.innerHTML = '<p style="text-align:center; color:#999; padding:10px;">No related products</p>';
-        }
     }
     
     function updateThumbnails(activeIndex) {
@@ -345,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 thumb.classList.add('active-thumbnail');
             }
             
-            thumb.onclick = () => showRelatedProduct(idx);
+            thumb.onclick = () => showProductInLightbox(idx);
             thumbnailContainer.appendChild(thumb);
         });
     }
@@ -362,7 +322,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     lightboxImg.style.opacity = '1';
                 }, 150);
             } else {
-                // Visual feedback if only one angle
                 rotateBtn.style.transform = 'scale(1.2)';
                 setTimeout(() => rotateBtn.style.transform = '', 200);
             }
@@ -373,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nextBtn) {
         nextBtn.onclick = function() {
             if (currentRelatedProducts.length > 0 && currentIndex < currentRelatedProducts.length - 1) {
-                showRelatedProduct(currentIndex + 1);
+                showProductInLightbox(currentIndex + 1);
             }
         };
     }
@@ -381,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (prevBtn) {
         prevBtn.onclick = function() {
             if (currentRelatedProducts.length > 0 && currentIndex > 0) {
-                showRelatedProduct(currentIndex - 1);
+                showProductInLightbox(currentIndex - 1);
             }
         };
     }
