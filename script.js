@@ -1,3 +1,6 @@
+
+// Store products by category for related products
+let productsByCategory = {};
 // ========== SECTION 1: FEATURED PRODUCTS (4 items per category) ==========
 Promise.all([
     fetch("https://dummyjson.com/products/category/mens-shirts?limit=10").then(res => res.json()),
@@ -6,6 +9,12 @@ Promise.all([
     fetch("https://dummyjson.com/products/category/womens-shoes?limit=10").then(res => res.json())
 ])
 .then(([shirts, dresses, shoes, womensShoes]) => {
+        productsByCategory = {
+        'mens-shirts': shirts.products || [],
+        'womens-dresses': dresses.products || [],
+        'mens-shoes': shoes.products || [],
+        'womens-shoes': womensShoes.products || []
+    };
     const container = document.getElementById("productContainer");
     if (!container) {
         console.error("productContainer element not found!");
@@ -54,31 +63,35 @@ Promise.all([
         else if (product.category === 'womens-dresses') displayCategory = "Women's Dresses";
         else if (product.category === 'womens-shoes') displayCategory = "Women's Shoes";
 
-        const productCard = `
-            <div class="pro" id="product-${product.id}">
-           <img src="${product.images[0]}" alt="${product.title}" class="product-image">
-            <div class="des">
-                <span>${displayCategory}</span>
-                <h5>${product.title}</h5>
-                <div class="star">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-                <h4>$${product.price}</h4>
-                ${showColors ? `
+       const productCard = `
+<div class="pro" id="product-${product.id}">
+    <img src="${product.images[0]}" alt="${product.title}" class="product-image">
+    <!-- HIDDEN IMAGES - For rotate button (different angles of same product) -->
+    <div style="display: none;" class="product-all-images">
+        ${product.images.map(img => `<img src="${img}" class="hidden-product-image">`).join('')}
+    </div>
+    <div class="des">
+        <span>${displayCategory}</span>
+        <h5>${product.title}</h5>
+        <div class="star">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+        </div>
+        <h4>$${product.price}</h4>
+        ${showColors ? `
 <div class="product-rotate">
     <span class="rotate-btn" title="View more angles">
         <i class="fa-solid fa-rotate"></i>
     </span>
 </div>
 ` : ''}
-                <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
-            </div>
-        </div>
-        `;
+        <a href="#"><i class="fa-solid fa-cart-shopping cart"></i></a>
+    </div>
+</div>
+`;
         
         container.innerHTML += productCard;
     });
@@ -166,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ========== LIGHTBOX FUNCTIONALITY ==========
+// ========== LIGHTBOX WITH RELATED PRODUCTS (Option B) ==========
 document.addEventListener('DOMContentLoaded', function() {
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
@@ -184,163 +197,207 @@ document.addEventListener('DOMContentLoaded', function() {
     const productRating = document.getElementById("product-rating");
     const productStock = document.getElementById("product-stock");
     
-    let currentImages = [];
-    let currentIndex = 0;
-    let currentProduct = null;
+    let currentRelatedProducts = [];  // Other products from same category (for thumbnails)
+    let currentProductImages = [];    // Different angles of current product (for rotate button)
+    let currentIndex = 0;             // Index in related products
+    let currentRotateIndex = 0;       // Index in product angles
+    let currentProductData = null;
 
+    // Open lightbox when clicking product image
     document.addEventListener("click", function(e) {
         if (e.target.classList.contains('product-image')) {
             const productDiv = e.target.closest('.pro');
             
+            // Get current product info
             const title = productDiv.querySelector('h5').textContent;
             const category = productDiv.querySelector('.des span').textContent;
             const price = productDiv.querySelector('h4').textContent;
+            const productId = parseInt(productDiv.id.replace('product-', ''));
             
-            currentProduct = {
+            // Get current product's multi-angle images (for rotate button)
+            const hiddenContainer = productDiv.querySelector('.product-all-images');
+            if (hiddenContainer) {
+                const hiddenImages = hiddenContainer.querySelectorAll('img');
+                currentProductImages = [...new Set(Array.from(hiddenImages).map(img => img.src))];
+                currentRotateIndex = 0;
+            }
+            
+            // Determine which category this product belongs to
+            let productCategoryKey = '';
+            if (category.includes("Men's Shirts")) productCategoryKey = 'mens-shirts';
+            else if (category.includes("Women's Dresses")) productCategoryKey = 'womens-dresses';
+            else if (category.includes("Men's Shoes")) productCategoryKey = 'mens-shoes';
+            else if (category.includes("Women's Shoes")) productCategoryKey = 'womens-shoes';
+            
+            // Get related products from same category (excluding current product)
+            const allCategoryProducts = productsByCategory[productCategoryKey] || [];
+            currentRelatedProducts = allCategoryProducts.filter(p => p.id !== productId);
+            
+            // Store current product data
+            currentProductData = {
+                id: productId,
                 title: title,
                 category: category,
                 price: price,
-                description: "Premium quality product with excellent craftsmanship. Made from high-quality materials for long-lasting comfort and style.",
+                description: "Premium quality product with excellent craftsmanship.",
                 rating: 4.5,
                 stock: Math.floor(Math.random() * 20) + 1
             };
             
-            const allImages = productDiv.querySelectorAll('img[src]');
-            currentImages = [...new Set(Array.from(allImages).map(img => img.src))];
+            // Display the first related product (or current if no related)
+            if (currentRelatedProducts.length > 0) {
+                showRelatedProduct(0);
+            } else {
+                showCurrentProduct();
+            }
             
-            currentIndex = currentImages.indexOf(e.target.src);
-            if (currentIndex === -1) currentIndex = 0;
-            
-            showImage(currentIndex);
-            updateProductDetails(currentProduct);
             lightbox.style.display = "block";
         }
     });
     
-    // Color dot click functionality
-   document.addEventListener('click', function(e) {
-    const rotateBtn = e.target.closest('.rotate-btn');
-    if (rotateBtn) {
-        const isShopPage = window.location.pathname.includes('shop.html') || 
-                          window.location.href.includes('shop.html');
-            
-            if (!isShopPage) {
-                e.target.style.transform = 'scale(1.2)';
-                setTimeout(() => e.target.style.transform = '', 200);
-                return;
-            }
-            
-            const productDiv = e.target.closest('.pro');
-            const productImg = productDiv.querySelector('.product-image');
-            
-            let currentSrc = productImg.src;
-            let match = currentSrc.match(/\/(\d+)\.webp$/);
-            
-            if (match) {
-                let currentIndex = parseInt(match[1]);
-                let nextIndex = (currentIndex % 4) + 1;
-                let newSrc = currentSrc.replace(`/${currentIndex}.webp`, `/${nextIndex}.webp`);
-                
-                productImg.style.opacity = '0.5';
-                setTimeout(() => {
-                    productImg.src = newSrc;
-                    productImg.style.opacity = '1';
-                }, 150);
-            } else {
-                productImg.style.transform = 'scale(0.95)';
-                setTimeout(() => productImg.style.transform = '', 200);
-            }
-        }
-    });
-
-    function showImage(index) {
-        if (currentImages.length > 0) {
-            lightboxImg.src = currentImages[index];
-            counter.textContent = `${index + 1} / ${currentImages.length}`;
-            updateThumbnails(index);
-            
-            if (prevBtn && nextBtn) {
-                prevBtn.style.display = currentImages.length > 1 ? "block" : "none";
-                nextBtn.style.display = currentImages.length > 1 ? "block" : "none";
-            }
-        }
-    }
-
-    function updateProductDetails(product) {
-        if (!product) return;
+    function showRelatedProduct(index) {
+        if (index < 0 || index >= currentRelatedProducts.length) return;
         
+        const product = currentRelatedProducts[index];
+        currentIndex = index;
+        
+        // Update display
         productTitle.textContent = product.title;
-        productCategory.textContent = product.category;
-        productDescription.textContent = product.description;
-        productPrice.textContent = product.price;
+        productCategory.textContent = product.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        productDescription.textContent = "Premium quality product with excellent craftsmanship. Made from high-quality materials for long-lasting comfort and style.";
+        productPrice.textContent = `$${product.price}`;
         
-        const stars = '★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
-        productStars.textContent = stars;
-        productRating.textContent = `(${product.rating} stars)`;
+        // Load this product's multi-angle images for rotate button
+        if (product.images && product.images.length > 0) {
+            currentProductImages = product.images;
+            currentRotateIndex = 0;
+            lightboxImg.src = currentProductImages[0];
+        }
         
-        if (product.stock > 10) {
-            productStock.textContent = `✓ In Stock (${product.stock} available)`;
+        // Update counter (showing related products count)
+        counter.textContent = `${index + 1} / ${currentRelatedProducts.length}`;
+        
+        // Stock status
+        const stock = Math.floor(Math.random() * 20) + 1;
+        if (stock > 10) {
+            productStock.textContent = `✓ In Stock (${stock} available)`;
             productStock.className = 'stock-status';
-        } else if (product.stock > 0) {
-            productStock.textContent = `⚠ Only ${product.stock} left in stock`;
+        } else if (stock > 0) {
+            productStock.textContent = `⚠ Only ${stock} left in stock`;
             productStock.className = 'stock-status low-stock';
         } else {
             productStock.textContent = '✗ Out of Stock';
             productStock.className = 'stock-status out-stock';
         }
+        
+        // Stars
+        const rating = 4.5;
+        const stars = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
+        productStars.textContent = stars;
+        productRating.textContent = `(${rating} stars)`;
+        
+        // Update thumbnails (showing related products)
+        updateThumbnails(index);
     }
-
+    
+    function showCurrentProduct() {
+        productTitle.textContent = currentProductData.title;
+        productCategory.textContent = currentProductData.category;
+        productDescription.textContent = currentProductData.description;
+        productPrice.textContent = currentProductData.price;
+        
+        if (currentProductImages.length > 0) {
+            lightboxImg.src = currentProductImages[0];
+        }
+        
+        counter.textContent = `1 / 1`;
+        
+        if (currentProductData.stock > 10) {
+            productStock.textContent = `✓ In Stock (${currentProductData.stock} available)`;
+            productStock.className = 'stock-status';
+        } else if (currentProductData.stock > 0) {
+            productStock.textContent = `⚠ Only ${currentProductData.stock} left in stock`;
+            productStock.className = 'stock-status low-stock';
+        } else {
+            productStock.textContent = '✗ Out of Stock';
+            productStock.className = 'stock-status out-stock';
+        }
+        
+        const stars = '★'.repeat(Math.floor(currentProductData.rating)) + '☆'.repeat(5 - Math.floor(currentProductData.rating));
+        productStars.textContent = stars;
+        productRating.textContent = `(${currentProductData.rating} stars)`;
+        
+        // Clear thumbnails or show message
+        if (thumbnailContainer) {
+            thumbnailContainer.innerHTML = '<p style="text-align:center; color:#999; padding:10px;">No related products</p>';
+        }
+    }
+    
     function updateThumbnails(activeIndex) {
         if (!thumbnailContainer) return;
-        
         thumbnailContainer.innerHTML = '';
-        currentImages.forEach((imgUrl, idx) => {
+        
+        currentRelatedProducts.forEach((product, idx) => {
             const thumb = document.createElement('img');
-            thumb.src = imgUrl;
+            thumb.src = product.images[0];
             thumb.classList.add('thumbnail');
             if (idx === activeIndex) {
                 thumb.classList.add('active-thumbnail');
             }
             
-            thumb.onclick = function() {
-                currentIndex = idx;
-                showImage(currentIndex);
-            };
-            
+            thumb.onclick = () => showRelatedProduct(idx);
             thumbnailContainer.appendChild(thumb);
         });
     }
-
+    
+    // Rotate button functionality - rotates through current product's angles
+    document.addEventListener('click', function(e) {
+        const rotateBtn = e.target.closest('.rotate-btn');
+        if (rotateBtn && lightbox.style.display === "block") {
+            if (currentProductImages.length > 1) {
+                currentRotateIndex = (currentRotateIndex + 1) % currentProductImages.length;
+                lightboxImg.style.opacity = '0.5';
+                setTimeout(() => {
+                    lightboxImg.src = currentProductImages[currentRotateIndex];
+                    lightboxImg.style.opacity = '1';
+                }, 150);
+            } else {
+                // Visual feedback if only one angle
+                rotateBtn.style.transform = 'scale(1.2)';
+                setTimeout(() => rotateBtn.style.transform = '', 200);
+            }
+        }
+    });
+    
+    // Navigation for related products
     if (nextBtn) {
         nextBtn.onclick = function() {
-            if (currentImages.length > 0) {
-                currentIndex = (currentIndex + 1) % currentImages.length;
-                showImage(currentIndex);
+            if (currentRelatedProducts.length > 0 && currentIndex < currentRelatedProducts.length - 1) {
+                showRelatedProduct(currentIndex + 1);
             }
         };
     }
-
+    
     if (prevBtn) {
         prevBtn.onclick = function() {
-            if (currentImages.length > 0) {
-                currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
-                showImage(currentIndex);
+            if (currentRelatedProducts.length > 0 && currentIndex > 0) {
+                showRelatedProduct(currentIndex - 1);
             }
         };
     }
-
+    
     if (closeBtn) {
         closeBtn.onclick = function() {
             lightbox.style.display = "none";
         };
     }
-
+    
     lightbox.onclick = function(e) {
         if (e.target === lightbox) {
             lightbox.style.display = "none";
         }
     };
-
+    
     document.addEventListener('keydown', function(e) {
         if (lightbox.style.display === "block") {
             if (e.key === 'Escape') {
@@ -353,7 +410,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
 // ========== MOBILE MENU FUNCTIONALITY ==========
 const bar = document.getElementById('bar');
 const close = document.getElementById('close');
