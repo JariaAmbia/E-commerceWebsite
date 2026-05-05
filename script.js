@@ -197,23 +197,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const productRating = document.getElementById("product-rating");
     const productStock = document.getElementById("product-stock");
     
-    let currentRelatedProducts = [];  // Other products from same category
-    let currentProductImages = [];    // Different angles of current product
-    let currentIndex = 0;             // Index in related products
-    let currentRotateIndex = 0;       // Index in product angles
+    let currentRelatedProducts = [];
+    let currentProductImages = [];
+    let currentIndex = 0;
+    let currentRotateIndex = 0;
 
     // Open lightbox when clicking product image
     document.addEventListener("click", function(e) {
         if (e.target.classList.contains('product-image')) {
             const productDiv = e.target.closest('.pro');
             
-            // Get clicked product info
             const clickedTitle = productDiv.querySelector('h5').textContent;
             const clickedCategory = productDiv.querySelector('.des span').textContent;
             const clickedPrice = productDiv.querySelector('h4').textContent;
             const clickedProductId = parseInt(productDiv.id.replace('product-', ''));
             
-            // Get clicked product's multi-angle images (for rotate button)
+            // Get clicked product's multi-angle images
             const hiddenContainer = productDiv.querySelector('.product-all-images');
             if (hiddenContainer) {
                 const hiddenImages = hiddenContainer.querySelectorAll('img');
@@ -221,29 +220,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentRotateIndex = 0;
             }
             
-            // Determine which category this product belongs to
+            // Determine category
             let productCategoryKey = '';
             if (clickedCategory.includes("Men's Shirts")) productCategoryKey = 'mens-shirts';
             else if (clickedCategory.includes("Women's Dresses")) productCategoryKey = 'womens-dresses';
             else if (clickedCategory.includes("Men's Shoes")) productCategoryKey = 'mens-shoes';
             else if (clickedCategory.includes("Women's Shoes")) productCategoryKey = 'womens-shoes';
             
-            // Get all products from same category
             const allCategoryProducts = productsByCategory[productCategoryKey] || [];
-            
-            // Create related products list (all products from same category)
             currentRelatedProducts = [...allCategoryProducts];
             
-            // Find which index is the clicked product
             currentIndex = currentRelatedProducts.findIndex(p => p.id === clickedProductId);
             if (currentIndex === -1) currentIndex = 0;
             
-            // Store current product data for reference
-            const currentProductData = currentRelatedProducts[currentIndex];
-            
-            // Display the clicked product
             showProductInLightbox(currentIndex);
-            
             lightbox.style.display = "block";
         }
     });
@@ -254,23 +244,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const product = currentRelatedProducts[index];
         currentIndex = index;
         
-        // Update display with product data
         productTitle.textContent = product.title;
         productCategory.textContent = product.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         productDescription.textContent = "Premium quality product with excellent craftsmanship. Made from high-quality materials for long-lasting comfort and style.";
         productPrice.textContent = `$${product.price}`;
         
-        // Load this product's multi-angle images for rotate button
         if (product.images && product.images.length > 0) {
             currentProductImages = product.images;
             currentRotateIndex = 0;
             lightboxImg.src = currentProductImages[0];
         }
         
-        // Update counter
         counter.textContent = `${index + 1} / ${currentRelatedProducts.length}`;
         
-        // Stock status (random for demo)
         const stock = Math.floor(Math.random() * 20) + 1;
         if (stock > 10) {
             productStock.textContent = `✓ In Stock (${stock} available)`;
@@ -283,13 +269,11 @@ document.addEventListener('DOMContentLoaded', function() {
             productStock.className = 'stock-status out-stock';
         }
         
-        // Stars (using product rating if available)
         const rating = product.rating || 4.5;
         const stars = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
         productStars.textContent = stars;
         productRating.textContent = `(${rating} stars)`;
         
-        // Update thumbnails
         updateThumbnails(index);
     }
     
@@ -310,10 +294,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Rotate button functionality - rotates through current product's angles
+    // FIXED: Separate rotate button handler for lightbox ONLY
     document.addEventListener('click', function(e) {
         const rotateBtn = e.target.closest('.rotate-btn');
         if (rotateBtn && lightbox.style.display === "block") {
+            e.stopPropagation();
             if (currentProductImages.length > 1) {
                 currentRotateIndex = (currentRotateIndex + 1) % currentProductImages.length;
                 lightboxImg.style.opacity = '0.5';
@@ -321,14 +306,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     lightboxImg.src = currentProductImages[currentRotateIndex];
                     lightboxImg.style.opacity = '1';
                 }, 150);
-            } else {
-                rotateBtn.style.transform = 'scale(1.2)';
-                setTimeout(() => rotateBtn.style.transform = '', 200);
             }
         }
     });
     
-    // Navigation for related products
+    // Navigation buttons
     if (nextBtn) {
         nextBtn.onclick = function() {
             if (currentRelatedProducts.length > 0 && currentIndex < currentRelatedProducts.length - 1) {
@@ -369,6 +351,66 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// ========== ROTATE BUTTON FOR SHOP PAGE (Outside lightbox) ==========
+document.addEventListener('click', function(e) {
+    const rotateBtn = e.target.closest('.rotate-btn');
+    if (rotateBtn && lightbox.style.display !== "block") {
+        const isShopPage = window.location.pathname.includes('shop.html') || 
+                          window.location.href.includes('shop.html');
+        
+        if (!isShopPage) {
+            e.target.style.transform = 'scale(1.2)';
+            setTimeout(() => e.target.style.transform = '', 200);
+            return;
+        }
+        
+        const productDiv = rotateBtn.closest('.pro');
+        const productImg = productDiv.querySelector('.product-image');
+        
+        // Get hidden images for this product
+        const hiddenContainer = productDiv.querySelector('.product-all-images');
+        if (hiddenContainer) {
+            const hiddenImages = hiddenContainer.querySelectorAll('img');
+            const productImages = [...new Set(Array.from(hiddenImages).map(img => img.src))];
+            
+            if (productImages.length > 1) {
+                let currentSrc = productImg.src;
+                let currentIndex = productImages.indexOf(currentSrc);
+                let nextIndex = (currentIndex + 1) % productImages.length;
+                
+                productImg.style.opacity = '0.5';
+                setTimeout(() => {
+                    productImg.src = productImages[nextIndex];
+                    productImg.style.opacity = '1';
+                }, 150);
+            } else {
+                productImg.style.transform = 'scale(0.95)';
+                setTimeout(() => productImg.style.transform = '', 200);
+            }
+        } else {
+            // Fallback to old method
+            let currentSrc = productImg.src;
+            let match = currentSrc.match(/\/(\d+)\.webp$/);
+            
+            if (match) {
+                let currentIdx = parseInt(match[1]);
+                let nextIdx = (currentIdx % 4) + 1;
+                let newSrc = currentSrc.replace(`/${currentIdx}.webp`, `/${nextIdx}.webp`);
+                
+                productImg.style.opacity = '0.5';
+                setTimeout(() => {
+                    productImg.src = newSrc;
+                    productImg.style.opacity = '1';
+                }, 150);
+            } else {
+                productImg.style.transform = 'scale(0.95)';
+                setTimeout(() => productImg.style.transform = '', 200);
+            }
+        }
+    }
+});
+
 // ========== MOBILE MENU FUNCTIONALITY ==========
 const bar = document.getElementById('bar');
 const close = document.getElementById('close');
