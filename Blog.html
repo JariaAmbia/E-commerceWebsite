@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecommerce - Blog</title>
+    <title>E_commerce - Blog</title>
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -37,7 +37,7 @@
     </section>
 
     <section id="page-header" class="blog-header">
-        <h2>#readmore</h2>
+        <h2>#read more</h2>
         <p>Read all case studies about our products!</p>
     </section>
 
@@ -98,8 +98,10 @@
             <h1>13/01</h1>
         </div>
     </section>
+<!-- Overlay -->
+<div id="admin-overlay" class="admin-overlay"></div>
 
-   <!-- Admin Panel Modal (Hidden by default - appears when admin clicks icon) -->
+<!-- Admin Panel - Slides from Right -->
 <div id="admin-modal" class="admin-modal">
     <div class="admin-modal-content">
         <div class="admin-modal-header">
@@ -113,32 +115,31 @@
                 <button class="admin-tab-btn" data-tab="manage-tab">✏️ Manage Posts</button>
             </div>
             
-            <!-- CREATE POST TAB -->
+            <!-- Create Post Tab -->
             <div id="create-tab" class="admin-tab-content active-tab">
                 <h3>Create New Blog Post</h3>
                 <form id="create-post-form">
                     <input type="text" id="post-title" placeholder="Post Title" required>
                     <textarea id="post-description" placeholder="Post Description" rows="3" required></textarea>
-                    
-                    <!-- Image URL Field (simpler) -->
-                    <input type="text" id="post-image" placeholder="Image URL (e.g., image/blog5.jpg or https://example.com/pic.jpg)" required>
-                    <small style="display: block; margin-bottom: 15px; color: #666;">Tip: Use local image like "image/yourpic.jpg" or any image URL from the web</small>
-                    
-                    <input type="date" id="post-date" required>
+                    <input type="text" id="post-image" placeholder="Image URL" required>
+                    <input type="text" id="post-date" placeholder="Date (DD/MM)" required>
                     <button type="submit" class="create-btn">📤 Publish Post</button>
                 </form>
             </div>
             
-            <!-- MANAGE POSTS TAB -->
+            <!-- Manage Posts Tab -->
             <div id="manage-tab" class="admin-tab-content">
-                <h3>Delete or Edit Posts</h3>
-                <div id="posts-list" class="admin-posts-list">
-                    <!-- Posts will appear here -->
-                </div>
+                <h3>Manage Posts</h3>
+                <div id="posts-list" class="admin-posts-list"></div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Admin Trigger Button -->
+<button id="admin-icon" style="position:fixed; bottom:20px; right:20px; background:#2c3e50; color:white; border:none; padding:15px 20px; border-radius:50px; cursor:pointer; z-index:999;">
+    🛡️ Admin
+</button>
     <!-- Lightbox -->
     <div id="lightbox" class="lightbox">
         <span class="close">&times;</span>

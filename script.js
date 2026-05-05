@@ -369,83 +369,90 @@ if(close){
         nav.classList.remove('active');
     });
 }
-// ========== BLOG ADMIN PANEL WITH CREATE/DELETE ==========
+// Admin Panel JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     
-    // ========== DEFAULT BLOG POSTS (Your original 5) ==========
+    // Default blog posts
     const defaultPosts = [
         {
             title: "Stylish t-shirt with a comfortable fit and premium quality fabric.",
-            description: "The t-shirt feels very smooth on the skin and is perfect for daily wear. Its color and design look trendy, making it a great choice for casual outfits.",
+            description: "The t-shirt feels very smooth on the skin and is perfect for daily wear.",
             image: "image/blog1.jpg",
             date: "13/01"
         },
         {
             title: "How to style a Quiff",
-            description: "To style a quiff, start by applying a light product for texture and volume to slightly damp hair, then blow‑dry while lifting the front section upward and backward to create height and shape.",
+            description: "To style a quiff, start by applying a light product for texture and volume.",
             image: "image/blog2.png",
             date: "13/01"
         },
         {
             title: "Must-Have skater girl items.",
-            description: "Skater girls always need the essentials to stay stylish and comfortable on their boards. From durable sneakers to trendy graphic tees, these items make skating fun and effortless.",
+            description: "Skater girls always need the essentials to stay stylish and comfortable.",
             image: "image/blog3.png",
             date: "13/01"
         },
         {
             title: "Runway inspired trends.",
-            description: "Fashion lovers can bring high-end runway looks into their everyday wardrobe. Bold prints, statement accessories, and chic silhouettes make any outfit stand out.",
+            description: "Fashion lovers can bring high-end runway looks into their everyday wardrobe.",
             image: "image/b7.png",
             date: "13/01"
         },
         {
             title: "AW20 menswear trends",
-            description: "Autumn/Winter 2020 menswear showcased rich textures and layered outfits. Oversized coats, tailored suits, and earthy tones defined the season's style.",
+            description: "Autumn/Winter 2020 menswear showcased rich textures and layered outfits.",
             image: "image/blog4.jpg",
             date: "13/01"
         }
     ];
     
-    // Load posts from localStorage or use defaults
+    // Load or initialize posts
     let blogPosts = JSON.parse(localStorage.getItem('blogPosts'));
     if (!blogPosts || blogPosts.length === 0) {
         blogPosts = [...defaultPosts];
         localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
     }
     
-    // ========== DISPLAY BLOG POSTS (Image LEFT, Description RIGHT) ==========
+    // Display blog posts
     function displayBlogPosts() {
         const blogContainer = document.getElementById('blog');
         if (!blogContainer) return;
         
         blogContainer.innerHTML = '';
-        
-        // Show posts (newest first - by date, but since dates are same, keep order as is)
         blogPosts.forEach(post => {
-            const blogHTML = `
+            blogContainer.innerHTML += `
             <div class="blog-box">
                 <div class="blog-img">
                     <img src="${post.image}" alt="${post.title}" onerror="this.src='image/blog1.jpg'">
                 </div>
                 <div class="blog-details">
-                    <h4>${post.title}</h4>
-                    <p>${post.description}</p>
+                    <h4>${escapeHtml(post.title)}</h4>
+                    <p>${escapeHtml(post.description)}</p>
                     <a href="#">CONTINUE READING</a>
                 </div>
-                <h1>${post.date}</h1>
+                <h1>${escapeHtml(post.date)}</h1>
             </div>
             `;
-            blogContainer.innerHTML += blogHTML;
         });
     }
     
-    // ========== DISPLAY POSTS IN ADMIN PANEL ==========
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Display posts in admin panel
     function displayAdminPosts() {
         const postsList = document.getElementById('posts-list');
         if (!postsList) return;
         
         if (blogPosts.length === 0) {
-            postsList.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No posts yet. Create your first post!</p>';
+            postsList.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No posts yet.</p>';
             return;
         }
         
@@ -455,9 +462,9 @@ document.addEventListener('DOMContentLoaded', function() {
             postDiv.className = 'admin-post-item';
             postDiv.innerHTML = `
                 <div class="admin-post-info">
-                    <h4>${post.title.substring(0, 40)}${post.title.length > 40 ? '...' : ''}</h4>
-                    <p>📅 ${post.date}</p>
-                    <small>${post.description.substring(0, 50)}...</small>
+                    <h4>${escapeHtml(post.title.substring(0, 40))}${post.title.length > 40 ? '...' : ''}</h4>
+                    <p>📅 ${escapeHtml(post.date)}</p>
+                    <small>${escapeHtml(post.description.substring(0, 50))}...</small>
                 </div>
                 <div class="admin-post-actions">
                     <button class="admin-edit-btn" data-index="${index}">✏️ Edit</button>
@@ -467,47 +474,87 @@ document.addEventListener('DOMContentLoaded', function() {
             postsList.appendChild(postDiv);
         });
         
-        // DELETE functionality
+        // Delete posts
         document.querySelectorAll('.admin-delete-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
-                if (confirm('Are you sure you want to delete this post?')) {
+                if (confirm('Delete this post?')) {
                     blogPosts.splice(index, 1);
                     localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
                     displayAdminPosts();
                     displayBlogPosts();
-                    alert('✅ Post deleted successfully!');
+                    alert('Post deleted!');
                 }
             });
         });
         
-        // EDIT functionality
+        // Edit posts with form modal
         document.querySelectorAll('.admin-edit-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
                 const post = blogPosts[index];
                 
-                const newTitle = prompt('Edit Title:', post.title);
-                const newDesc = prompt('Edit Description:', post.description);
-                const newImage = prompt('Edit Image URL:', post.image);
-                const newDate = prompt('Edit Date (DD/MM):', post.date);
+                // Create edit modal (centered popup)
+                const editModal = document.createElement('div');
+                editModal.className = 'admin-modal';
+                editModal.style.display = 'flex';
+                editModal.style.alignItems = 'center';
+                editModal.style.justifyContent = 'center';
+                editModal.style.background = 'rgba(0,0,0,0.6)';
+                editModal.style.right = 'auto';
+                editModal.style.width = '100%';
+                editModal.style.animation = 'slideDown 0.3s ease';
+                editModal.innerHTML = `
+                    <div class="admin-modal-content" style="max-width: 500px; margin: 0; border-radius: 15px;">
+                        <div class="admin-modal-header">
+                            <h2><i class="fas fa-edit"></i> Edit Post</h2>
+                            <span class="edit-close" style="font-size:35px; cursor:pointer;">&times;</span>
+                        </div>
+                        <div class="admin-modal-body">
+                            <input type="text" id="edit-title" placeholder="Title" value="${escapeHtml(post.title).replace(/"/g, '&quot;')}" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+                            <textarea id="edit-desc" placeholder="Description" rows="3" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">${escapeHtml(post.description)}</textarea>
+                            <input type="text" id="edit-image" placeholder="Image URL" value="${escapeHtml(post.image)}" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+                            <input type="text" id="edit-date" placeholder="Date" value="${escapeHtml(post.date)}" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+                            <button id="save-edit" style="background:#27ae60; color:white; border:none; padding:12px; width:100%; border-radius:8px; cursor:pointer;">Save Changes</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(editModal);
                 
-                if (newTitle) post.title = newTitle;
-                if (newDesc) post.description = newDesc;
-                if (newImage) post.image = newImage;
-                if (newDate) post.date = newDate;
+                // Close edit modal
+                editModal.querySelector('.edit-close').onclick = () => editModal.remove();
+                editModal.onclick = (e) => { if(e.target === editModal) editModal.remove(); };
                 
-                localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
-                displayAdminPosts();
-                displayBlogPosts();
-                alert('✅ Post updated successfully!');
+                // Save edited post
+                document.getElementById('save-edit').onclick = () => {
+                    const newTitle = document.getElementById('edit-title').value;
+                    const newDesc = document.getElementById('edit-desc').value;
+                    const newImage = document.getElementById('edit-image').value;
+                    const newDate = document.getElementById('edit-date').value;
+                    
+                    if(newTitle && newDesc && newImage && newDate) {
+                        blogPosts[index] = {
+                            title: newTitle,
+                            description: newDesc,
+                            image: newImage,
+                            date: newDate
+                        };
+                        localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
+                        displayAdminPosts();
+                        displayBlogPosts();
+                        editModal.remove();
+                        alert('Post updated!');
+                    } else {
+                        alert('Please fill all fields');
+                    }
+                };
             });
         });
     }
     
-    // ========== CREATE NEW POST ==========
+    // Create new post
     const createForm = document.getElementById('create-post-form');
-    if (createForm) {
+    if(createForm) {
         createForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -516,81 +563,63 @@ document.addEventListener('DOMContentLoaded', function() {
             const image = document.getElementById('post-image').value;
             const date = document.getElementById('post-date').value;
             
-            if (!title || !description || !image || !date) {
-                alert('❌ Please fill all fields!');
+            if(!title || !description || !image || !date) {
+                alert('Please fill all fields');
                 return;
             }
             
-            // Format date from YYYY-MM-DD to DD/MM
-            const formattedDate = date.split('-').reverse().slice(0,2).join('/');
-            
-            const newPost = {
-                title: title,
-                description: description,
-                image: image,
-                date: formattedDate
-            };
-            
-            // Add to TOP of array (newest first)
-            blogPosts.unshift(newPost);
+            blogPosts.unshift({title, description, image, date});
             localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
-            
-            // Refresh displays
             displayBlogPosts();
             displayAdminPosts();
-            
-            // Clear form
             createForm.reset();
-            alert('✅ Post created successfully! It appears at the TOP of your blog.');
+            alert('Post created!');
         });
     }
     
-    // ========== ADMIN MODAL (POPUP) ==========
+    // Panel controls (slide from right)
     const adminModal = document.getElementById('admin-modal');
+    const adminOverlay = document.getElementById('admin-overlay');
     const adminIcon = document.getElementById('admin-icon');
-    const mobileAdmin = document.getElementById('mobile-admin');
     const closeBtn = document.querySelector('.admin-close');
     
-    function openModal(e) {
-        if (e) e.preventDefault();
+    function openPanel() {
         adminModal.style.display = 'block';
-        displayAdminPosts(); // Refresh list
+        adminOverlay.style.display = 'block';
+        displayAdminPosts();
     }
     
-    function closeModal() {
+    function closePanel() {
         adminModal.style.display = 'none';
+        adminOverlay.style.display = 'none';
     }
     
-    if (adminIcon) adminIcon.addEventListener('click', openModal);
-    if (mobileAdmin) mobileAdmin.addEventListener('click', openModal);
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if(adminIcon) {
+        adminIcon.onclick = openPanel;
+    }
     
-    // Close when clicking outside modal
-    window.addEventListener('click', function(e) {
-        if (e.target === adminModal) {
-            closeModal();
-        }
-    });
+    if(closeBtn) {
+        closeBtn.onclick = closePanel;
+    }
     
-    // ========== TAB SWITCHING IN ADMIN PANEL ==========
+    if(adminOverlay) {
+        adminOverlay.onclick = closePanel;
+    }
+    
+    // Tab switching
     const tabBtns = document.querySelectorAll('.admin-tab-btn');
     const tabContents = document.querySelectorAll('.admin-tab-content');
     
     tabBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
-            
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active-tab'));
-            
             this.classList.add('active');
             document.getElementById(tabId).classList.add('active-tab');
         });
     });
     
-    // ========== INITIAL DISPLAY ==========
+    // Initial display
     displayBlogPosts();
-    displayAdminPosts();
-    
-    console.log('✅ Blog Admin Panel Ready! Click the shield icon 🛡️ to manage posts.');
 });
