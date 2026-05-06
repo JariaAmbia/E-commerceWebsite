@@ -1,44 +1,46 @@
 <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ecommerce</title>
-        <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecommerce - Blog</title>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
     />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
     
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        
     <section id="header">
         <a href="#"><img src="image/logo3.png" height="70" class="logo"></a>
         <div>
             <ul id="navbar">
-                <li><a  href="index.html">Home</a></li>
-                <li><a  href="shop.html">Shop</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
                 <li><a class="active" href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
                 <li id="lg-bag"><a href="cart.html"><img src="image/lock1.png" height="30"></a></li>
+                <li id="lg-admin"><a href="#" id="admin-icon"><i class="fas fa-user-shield" style="font-size: 22px; color: #088178;"></i></a></li>
                 <a href="#" id="close"><img src="image/close.png" height="10" alt=""></a>
-
             </ul>
         </div>
         <div id="mobile">
             <a href="cart.html"><img src="image/lock1.png" height="30"></a>
-            <img id="bar" src="image/menu.png"height="30" alt="">
+            <a href="#" id="mobile-admin"><i class="fas fa-user-shield" style="font-size: 22px; color: #088178;"></i></a>
+            <img id="bar" src="image/menu.png" height="30" alt="">
         </div>
     </section>
+
     <section id="page-header" class="blog-header">
         <h2>#readmore</h2>
         <p>Read all case studies about our products!</p>
     </section>
+
     <section id="blog">
         <div class="blog-box">
             <div class="blog-img">
@@ -46,8 +48,7 @@
             </div>
             <div class="blog-details">
                 <h4>Stylish t-shirt with a comfortable fit and premium quality fabric.</h4>
-                <p>The t-shirt feels very smooth on the skin and is perfect for daily wear.
-                   Its color and design look trendy, making it a great choice for casual outfits</p>
+                <p>The t-shirt feels very smooth on the skin and is perfect for daily wear. Its color and design look trendy, making it a great choice for casual outfits</p>
                 <a href="#">CONTINUE READING</a>
             </div>
             <h1>13/01</h1>
@@ -91,90 +92,110 @@
             </div>
             <div class="blog-details">
                 <h4>AW20 menswear trends</h4>
-                <p>Autumn/Winter 2020 menswear showcased rich textures and layered outfits. Oversized coats, tailored suits, and earthy tones defined the season’s style.</p>
+                <p>Autumn/Winter 2020 menswear showcased rich textures and layered outfits. Oversized coats, tailored suits, and earthy tones defined the season's style.</p>
                 <a href="#">CONTINUE READING</a>
             </div>
             <h1>13/01</h1>
         </div>
-
     </section>
 
-    <section id="pagination" class="section-p1">
-    <a href="#">1</a>
-    <a href="#">2</a>
-    <a href="#"><i class="fa-solid fa-arrow-right"></i></a>
-     
-</section>
-
-
-
-<!-- Lightbox -->
-<div id="lightbox" class="lightbox">
-    <span class="close">&times;</span>
-    <div class="lightbox-content">
-        <!-- Left side - Image section -->
-        <div class="image-section">
-            <img class="lightbox-img" id="lightbox-img">
-            
-            <!-- Navigation buttons -->
-            <button class="lightbox-prev">&#10094;</button>
-            <button class="lightbox-next">&#10095;</button>
-            
-            <!-- Image counter -->
-            <div class="lightbox-counter" id="lightbox-counter">1 / 5</div>
-            
-            <!-- Thumbnails container -->
-            <div class="thumbnail-container" id="thumbnail-container"></div>
+   <!-- Admin Panel Modal (Hidden by default - appears when admin clicks icon) -->
+<div id="admin-modal" class="admin-modal">
+    <div class="admin-modal-content">
+        <div class="admin-modal-header">
+            <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+            <span class="admin-close">&times;</span>
         </div>
-
-        <!-- Right side - Product details section -->
-        <div class="details-section">
-            <div class="product-title" id="product-title"></div>
-            <div class="product-category" id="product-category"></div>
-            
-            <div class="rating-section">
-                <div class="stars" id="product-stars"></div>
-                <div class="rating-count" id="product-rating"></div>
+        <div class="admin-modal-body">
+            <!-- Tab Buttons -->
+            <div class="admin-tab-buttons">
+                <button class="admin-tab-btn active" data-tab="create-tab">➕ Create New Post</button>
+                <button class="admin-tab-btn" data-tab="manage-tab">✏️ Manage Posts</button>
             </div>
             
-            <div class="product-description" id="product-description"></div>
+            <!-- CREATE POST TAB -->
+            <div id="create-tab" class="admin-tab-content active-tab">
+                <h3>Create New Blog Post</h3>
+                <form id="create-post-form">
+                    <input type="text" id="post-title" placeholder="Post Title" required>
+                    <textarea id="post-description" placeholder="Post Description" rows="3" required></textarea>
+                    
+                    <!-- Image URL Field (simpler) -->
+                    <input type="text" id="post-image" placeholder="Image URL (e.g., image/blog5.jpg or https://example.com/pic.jpg)" required>
+                    <small style="display: block; margin-bottom: 15px; color: #666;">Tip: Use local image like "image/yourpic.jpg" or any image URL from the web</small>
+                    
+                    <input type="date" id="post-date" required>
+                    <button type="submit" class="create-btn">📤 Publish Post</button>
+                </form>
+            </div>
             
-            <div class="product-price" id="product-price"></div>
-            
-            <div class="stock-status" id="product-stock"></div>
-            
-            <button c lass="add-to-cart-btn">Add to Cart</button>
+            <!-- MANAGE POSTS TAB -->
+            <div id="manage-tab" class="admin-tab-content">
+                <h3>Delete or Edit Posts</h3>
+                <div id="posts-list" class="admin-posts-list">
+                    <!-- Posts will appear here -->
+                </div>
+            </div>
         </div>
     </div>
 </div>
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <span class="close">&times;</span>
+        <div class="lightbox-content">
+            <div class="image-section">
+                <img class="lightbox-img" id="lightbox-img">
+                <button class="lightbox-prev">&#10094;</button>
+                <button class="lightbox-next">&#10095;</button>
+                <div class="lightbox-counter" id="lightbox-counter">1 / 5</div>
+                <div class="thumbnail-container" id="thumbnail-container"></div>
+            </div>
+            <div class="details-section">
+                <div class="product-title" id="product-title"></div>
+                <div class="product-category" id="product-category"></div>
+                <div class="rating-section">
+                    <div class="stars" id="product-stars"></div>
+                    <div class="rating-count" id="product-rating"></div>
+                </div>
+                <div class="product-description" id="product-description"></div>
+                <div class="product-price" id="product-price"></div>
+                <div class="stock-status" id="product-stock"></div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+        </div>
+    </div>
 
-   
+    <section id="pagination" class="section-p1">
+        <a href="#">1</a>
+        <a href="#">2</a>
+        <a href="#"><i class="fa-solid fa-arrow-right"></i></a>
+    </section>
 
     <section id="newsletter" class="section-p1 section-m1">
         <div class="newstag">
             <h4>Sign Up For Newsletters</h4>
-            <p>Get E-mail update about our latest shop and <span>special offers.</span> </p>
+            <p>Get E-mail update about our latest shop and <span>special offers.</span></p>
         </div>
         <div class="form">
             <input type="text" placeholder="Your Email Address">
-            <button class="normal">Sing Up</button>
+            <button class="normal">Sign Up</button>
         </div>
     </section>
+
     <footer class="section-p1">
         <div class="col">
             <img class="logo" src="image/logo3.png" height="70" alt="">
             <h4>Contact</h4>
-            <p><strong>Address:</strong>562kodomtola street 5.Sylet</p>
-            <p><strong>Phone:</strong>+01 222 333 99 /+088 01 255 6981 </p>
-            <p><strong>Hours:</strong>10:00 - 18:00, Mon - Sat</p>
+            <p><strong>Address:</strong> 562 kodomtola street 5. Sylhet</p>
+            <p><strong>Phone:</strong> +01 222 333 99 / +088 01 255 6981</p>
+            <p><strong>Hours:</strong> 10:00 - 18:00, Mon - Sat</p>
             <div class="follow">
                 <h4>Follow us</h4>
                 <div class="icon">
-                    <img src="image/facebook.png"height= "20" alt="">
-                    <img src="image/instagram.png" height="20">
-                    <img src="image/twitter.png"height= "20" alt="">
-                    <img src="image/youtube.png"height= "20" alt="">
-
+                    <img src="image/facebook.png" height="20" alt="">
+                    <img src="image/instagram.png" height="20" alt="">
+                    <img src="image/twitter.png" height="20" alt="">
+                    <img src="image/youtube.png" height="20" alt="">
                 </div>
             </div>
         </div>
@@ -199,14 +220,13 @@
 
         <div class="col install">
             <h4>Install App</h4>
-            <p>Form App Store or Google Play</p>
+            <p>From App Store or Google Play</p>
             <div class="row">
-                <img src="image/app store.png" height="40">
-                <img src="image/google play 1.png "height="40" alt="">
+                <img src="image/app store.png" height="40" alt="">
+                <img src="image/google play 1.png" height="40" alt="">
             </div>
-             <p>Secured Payment Gateway</p>
-            <img src="image/pay.png"height="80" alt="">
-             <g></g>
+            <p>Secured Payment Gateway</p>
+            <img src="image/pay.png" height="80" alt="">
         </div>
 
         <div class="copyright">
@@ -215,5 +235,5 @@
     </footer>
 
     <script src="script.js"></script>
-    </body>
-    </html>
+</body>
+</html>
