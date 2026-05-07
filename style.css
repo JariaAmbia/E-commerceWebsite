@@ -324,7 +324,7 @@ body{
     bottom: 20px;
     right: 10px;
 }
-/* Lightbox styles - White background like Amazon */
+/* Lightbox styles */
 
 .lightbox {
     display: none;
@@ -1400,7 +1400,7 @@ text-align: center;
     z-index:0;
 }
 
-/* DARK OVERLAY F */
+/* DARK OVERLAY */
 .contact-section::after{
     content:"";
     position:absolute;
@@ -1409,9 +1409,6 @@ text-align: center;
     backdrop-filter: blur(20px);
     z-index:1;
 }
-
-<<<<<<< HEAD
-/*CONTAINER */
 
 .contact-container{
     position:relative;
@@ -1447,7 +1444,7 @@ text-align: center;
 .contact-map{
     flex:1;
     padding:20px;
-=======
+}
 /* Admin Panel - Slides from Right */
 .admin-modal {
     display: none;
@@ -1483,7 +1480,6 @@ text-align: center;
     background: #2c3e50;
     color: white;
     border-radius: 0;
->>>>>>> b2732c868cd816840e768dd0d1b4be1e0b81649a
 }
 
 /* MAP STYLE */
@@ -1494,7 +1490,7 @@ text-align: center;
     border-radius:15px;
 }
 
-/*TEXT STYLING (APPLE CLEAN TYPOGRAPHY)*/
+/*TEXT STYLING*/
 
 .contact-text span{
     font-size:12px;
@@ -1517,7 +1513,6 @@ text-align: center;
     color:#222;
 }
 
-<<<<<<< HEAD
 .info p{
     font-size:15px;
     color:#444;
@@ -1532,7 +1527,7 @@ text-align: center;
 }
 
 /*RESPONSIVE*/
-=======
+
 .admin-modal-body {
     padding: 25px;
     flex: 1;
@@ -1546,7 +1541,7 @@ text-align: center;
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
 }
->>>>>>> b2732c868cd816840e768dd0d1b4be1e0b81649a
+
 
 
 @media(max-width:768px){
@@ -1558,98 +1553,355 @@ text-align: center;
         font-size:28px;
     }
 }
-<<<<<<< HEAD
 /*form*/
-=======
-
-.admin-tab-content {
-    display: none;
-}
-
-.admin-tab-content.active-tab {
-    display: block;
-}
-
-#create-post-form input,
-#create-post-form textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: inherit;
-}
-
-.create-btn {
-    background: #27ae60;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-}
-
-.create-btn:hover {
-    background: #219a52;
-}
-
-.admin-posts-list {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.admin-post-item {
-    background: #f8f9fa;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 8px;
+.Form-details{
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    border-left: 4px solid #e74c3c;
+    align-items: flex-start;
+    gap: 35px;
+    padding: 90px 80px;
+    background: linear-gradient(135deg,#12001c,#00192b);
 }
 
-.admin-post-info h4 {
-    margin: 0 0 5px;
-    font-size: 15px;
+/* FORM SIDE */
+
+.Form-details form{
+    width: 68%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 45px;
+    border-radius: 30px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.45);
 }
 
-.admin-post-info p {
-    margin: 0;
-    font-size: 12px;
-    color: #7f8c8d;
+.Form-details form span{
+    color: #8be9fd;
+    letter-spacing: 4px;
+    font-size: 13px;
+    font-weight: 600;
 }
 
-.admin-post-actions button {
-    margin-left: 8px;
-    padding: 5px 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.Form-details form h2{
+    color: #fff;
+    font-size: 40px;
+    margin-bottom: 10px;
 }
 
-.admin-delete-btn {
-    background: #e74c3c;
-    color: white;
-}
-
-.admin-edit-btn {
-    background: #3498db;
-    color: white;
-}
-
-/* Overlay behind the panel */
-.admin-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+.Form-details form input,
+.Form-details form textarea{
     width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 9999;
-    display: none;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s ease;
 }
->>>>>>> b2732c868cd816840e768dd0d1b4be1e0b81649a
+
+.Form-details form input::placeholder,
+.Form-details form textarea::placeholder{
+    color: #d6d6d6;
+}
+
+.Form-details form textarea{
+    height: 180px;
+    resize: none;
+}
+
+.Form-details form input:focus,
+.Form-details form textarea:focus{
+    border-color: #7c4dff;
+    box-shadow: 0 0 18px rgba(124,77,255,0.5);
+}
+
+.Form-details form .normal{
+    border: none;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg,#7c4dff,#00c6ff);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.4s ease;
+}
+
+.Form-details form .normal:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,198,255,0.35);
+}
+
+/* PEOPLE SIDE */
+
+.people{
+    width: 28%;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 20px;
+}
+
+.people div{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: 0.4s ease;
+}
+
+.people div:hover{
+    transform: translateX(8px);
+    background: rgba(255,255,255,0.08);
+}
+
+/* IMAGE */
+
+.people div img{
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #7c4dff;
+    box-shadow: 0 0 18px rgba(124,77,255,0.45);
+}
+
+/* TEXT */
+
+.people div p{
+    color: #ffffffcc;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.people div p span{
+    display: block;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 3px;
+}
+/* CART SECTION */
+
+#cart{
+    padding: 100px 90px;
+    background: linear-gradient(to bottom right,#fffdf8,#f8f3ea,#fdfbf7);
+}
+
+/* TABLE */
+
+#cart table{
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(176,145,72,0.12);
+    border: 1px solid rgba(212,175,55,0.12);
+}
+
+/* HEAD SECTION */
+
+#cart table thead{
+    background: linear-gradient(to right,#d4af37,#f3df9b,#d4af37);
+}
+
+#cart table thead td{
+    color: #4b3710;
+    padding: 24px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+/* BODY ROWS */
+
+#cart table tbody tr{
+    transition: 0.4s ease;
+    border-bottom: 1px solid rgba(212,175,55,0.08);
+}
+
+#cart table tbody tr:hover{
+    background: #fffaf1;
+}
+
+/* TABLE DATA */
+
+#cart table tbody td{
+    padding: 28px 18px;
+    text-align: center;
+    color: #5f4b22;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* PRODUCT IMAGE */
+
+#cart table tbody img{
+    width: 95px;
+    height: 115px;
+    object-fit: cover;
+    border-radius: 20px;
+    border: 2px solid #f0dfab;
+    transition: 0.4s ease;
+    box-shadow: 0 10px 25px rgba(212,175,55,0.12);
+}
+
+#cart table tbody img:hover{
+    transform: scale(1.08);
+}
+
+/* PRODUCT NAME */
+
+#cart table tbody td:nth-child(3){
+    font-size: 16px;
+    font-weight: 600;
+    color: #3f2f0d;
+}
+
+/* REMOVE ICON */
+
+#cart table tbody a{
+    color: #caa43b;
+    font-size: 21px;
+    transition: 0.3s ease;
+}
+
+#cart table tbody a:hover{
+    color: #8c6a16;
+    transform: rotate(90deg);
+}
+
+/* QUANTITY INPUT */
+
+#cart table tbody input{
+    width: 75px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid #ead8a0;
+    background: #fffdf8;
+    text-align: center;
+    font-size: 15px;
+    color: #4b3710;
+    outline: none;
+    transition: 0.3s ease;
+}
+
+#cart table tbody input:focus{
+    border-color: #d4af37;
+    box-shadow: 0 0 12px rgba(212,175,55,0.2);
+}
+
+/* SUBTOTAL */
+
+#cart table tbody td:last-child{
+    font-weight: 700;
+    color: #b88a18;
+}
+#cart-add{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:40px;
+    padding:80px;
+    background:#f8f7f4;
+}
+#coupon{
+    width:58%;
+    background:#fff;
+    padding:35px;
+    border-radius:14px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+}
+#subtotal{
+    width:38%;
+    background:#fff;
+    padding:35px;
+    border-radius:14px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+}
+
+#coupon h3,
+#subtotal h3{
+    font-size:32px;
+    margin-bottom:30px;
+    position:relative;
+}
+
+#coupon h3::after,
+#subtotal h3::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-10px;
+    width:50px;
+    height:2px;
+    background:#d4a437;
+}
+
+/* INPUT + BUTTON */
+.coupon-box{
+    display:flex;
+    gap:15px;
+}
+
+#coupon input{
+    width:100%;
+    height:55px;
+    padding:0 15px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    outline:none;
+}
+
+button.normal{
+    padding:0 28px;
+    border:none;
+    border-radius:8px;
+    background:#d4a437;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+}
+
+/* TABLE */
+#subtotal table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:25px;
+}
+
+#subtotal table td{
+    border:1px solid #eee;
+    padding:18px;
+}
+
+#subtotal table tr:last-child td{
+    font-size:24px;
+    font-weight:bold;
+    color:#c28b1d;
+    background:#faf8f3;
+}
+
+/* CHECKOUT BUTTON */
+#subtotal button{
+    width:100%;
+    height:58px;
+    background:#004d43;
+    font-size:18px;
+}
+
+#subtotal button:hover{
+    background:#00695c;
+}

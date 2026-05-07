@@ -23,8 +23,8 @@
                 <li><a  href="shop.html">Shop</a></li>
                 <li><a  href="blog.html">Blog</a></li>
                 <li><a  href="about.html">About</a></li>
-                <li><a class="active" href="contact.html">Contact</a></li>
-                <li id="lg-bag"><a href="cart.html"><img src="image/lock1.png" height="30"></a></li>
+                <li><a  href="contact.html">Contact</a></li>
+                <li id="lg-bag"><a class="active" href="cart.html"><img src="image/lock1.png" height="30"></a></li>
                 <a href="#" id="close"><img src="image/close.png" height="10" alt=""></a>
 
             </ul>
@@ -35,72 +35,92 @@
         </div>
 </section> 
 <section id="page-header" class="about-header"> 
-    <h2>Contact With Us</h2> 
-    <p>“"Leave A Message,We Love To Hear From You!"”</p> 
+   
 </section>
+<section id = "cart" class="section-p1 " >
+    <table width="100%">
+        <thead>
+            <tr>
+                <td>Remove</td>
+                <td>Image</td>
+                <td>Product</td>
+                <td>Price</td>
+                <td>Quantity</td>
+                <td>SubTotal</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="#"><i class="far fa-times-circle"></i></a></td>
+                <td><img src="image/Products/f1.jpg" alt=""></td>
+                <td>Green and White Printed Shirt</td>
+                <td>$49.50</td>
+                <td><input type="number" value="1"></td>
+                <td>$49.50</td>
 
-   <section id="contact-details" class="section-p1 contact">
+            </tr>
 
-  <div class="contact-container">
+             <tr>
+                <td><a href="#"><i class="far fa-times-circle"></i></a></td>
+                <td><img src="image/Products/f2.png" alt=""></td>
+                <td>Scart With Tops</td>
+                <td>$39.50</td>
+                <td><input type="number" value="1"></td>
+                <td>$20.50</td>
 
-    <div class="contact-text">
-      <span>GET IN TOUCH</span>
-      <h2>Visit One Of Our Agency Location Or Contact With us Today</h2>
-      <h3>Head Office</h3>
+            </tr>
 
-      <div class="info">
-        <p><i class="fas fa-map"></i> Saddiq Tower, Noyashorok Sylhet</p>
-        <p><i class="fas fa-envelope"></i> jariaambiamuhsina@gmail.com</p>
-        <p><i class="fas fa-clock"></i> Monday To Saturday: 9.00am to 16.00pm</p>
-      </div>
-    </div>
-    <div class="contact-map">
-  <iframe 
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3619.0294144909217!2d91.87101357516539!3d24.896978277905454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x375054d61194840d%3A0xacaf1ba5c7af29!2z4Ka44Ka-4Kam4Ka_4KaVIOCmn-CmvuCmk-Cnn-CmvuCmsA!5e0!3m2!1sen!2sbd!4v1777819994017!5m2!1sen!2sbd"
-    width="100%"
-    height="400"
-    style="border:0;"
-    allowfullscreen=""
-    loading="lazy">
-  </iframe>
-</div>
-  </div>
+             <tr>
+                <td><a href="#"><i class="far fa-times-circle"></i></a></td>
+                <td><img src="image/Products/10.png" alt=""></td>
+                <td>Red Gown</td>
+                <td>$50.50</td>
+                <td><input type="number" value="1"></td>
+                <td>$50.50</td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
 </section>
-<section class="Form-details">
-    <form action="">
-    <span>LEAVE A MESSAGE</span>
-    <h2>We Love To Hear From You</h2>
-        <input type="text" placeholder="Name">
-        <input type="email" placeholder="E-mail">
-        <input type="text" placeholder="Subject">
-    <textarea placeholder="Your Message"></textarea>
-    <button class="normal">submit</button>
-    </form>
-    <div class="people">
-    <div>
-        <img src="image/contact/p1.jpg" height="400" alt="">
-        <p><span>Atia Chy</span> Senior Marketing Executive<br> phone: +88 0171 255 9811<br>Email:Atia.chy01@gmail.com</p>
-    </div>
-     <div>
-        <img src="image/contact/p2.jpg" height="400" alt="">
-        <p><span>John Doe</span> Senior Marketing Executive<br> phone: +8801727496164<br>Email:John.doe@gmail.com</p>
-    </div>
-     <div>
-        <img src="image/contact/p3.jpg" height="400" alt="">
-        <p><span>Rose Mary</span> Director<br> phone: +8801312496164<br>Email:Rose.mary@gmail.com</p>
-    </div>
-    </div>
-</section>
-    <section id="newsletter" class="section-p1 section-m1">
-        <div class="newstag">
-            <h4>Sign Up For Newsletters</h4>
-            <p>Get E-mail update about our latest shop and <span>special offers.</span> </p>
+   <section id="cart-add" class="section-p1">
+    <div id="coupon">
+        <h3>Apply Coupon</h3>
+
+        <div class="coupon-box">
+            <input type="text" placeholder="Enter Your Coupon">
+            <button class="normal">Apply</button>
         </div>
-        <div class="form">
-            <input type="text" placeholder="Your Email Address">
-            <button class="normal">Sing Up</button>
-        </div>
-    </section>
+    </div>
+    <div id="subtotal">
+        <h3>Cart Totals</h3>
+
+        <table>
+            <tr>
+                <td>Cart Subtotal</td>
+                <td>$109.50</td>
+            </tr>
+
+            <tr>
+                <td>Shipping</td>
+                <td>$20.00</td>
+            </tr>
+
+            <tr>
+                <td><strong>Total</strong></td>
+                <td><strong>$129.50</strong></td>
+            </tr>
+        </table>
+
+        <button class="normal">
+            Proceed To Checkout
+        </button>
+    </div>
+
+</section>
+   
     <footer class="section-p1">
         <div class="col">
             <img class="logo" src="image/logo3.png" height="70" alt="">
