@@ -826,3 +826,130 @@ window.addEventListener('load', function() {
     console.log('Cart system loaded - products should display normally');
     
 });
+
+
+// Coupon functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const applyBtn = document.querySelector('#coupon .normal');
+    const couponInput = document.querySelector('#coupon input[type="text"]');
+    let discount = 0;
+    
+    function updateTotal() {
+        let subtotal = 129.50;
+        const shipping = 20.00;
+        
+        const discountAmount = (subtotal * discount) / 100;
+        const newSubtotal = subtotal - discountAmount;
+        const finalTotal = newSubtotal + shipping;
+        
+        const rows = document.querySelectorAll('#subtotal table tr');
+        if (rows[0]) rows[0].cells[1].innerHTML = `$${newSubtotal.toFixed(2)}`;
+        if (rows[2]) rows[2].cells[1].innerHTML = `<strong>$${finalTotal.toFixed(2)}</strong>`;
+        
+        // Show discount message
+        console.log(`${discount}% discount applied`);
+    }
+    
+    if (applyBtn) {
+        applyBtn.addEventListener('click', function() {
+            const couponCode = couponInput.value.toUpperCase();
+            
+            // 5% to 50% discounts
+            if (couponCode === 'SAVE5') {
+                discount = 5;
+                updateTotal();
+                alert('5% discount applied!');
+            }
+            else if (couponCode === 'SAVE10') {
+                discount = 10;
+                updateTotal();
+                alert('10% discount applied!');
+            }
+            else if (couponCode === 'SAVE15') {
+                discount = 15;
+                updateTotal();
+                alert('15% discount applied!');
+            }
+            else if (couponCode === 'SAVE20') {
+                discount = 20;
+                updateTotal();
+                alert('20% discount applied!');
+            }
+            else if (couponCode === 'SAVE25') {
+                discount = 25;
+                updateTotal();
+                alert('25% discount applied!');
+            }
+            else if (couponCode === 'SAVE30') {
+                discount = 30;
+                updateTotal();
+                alert('30% discount applied!');
+            }
+            else if (couponCode === 'SAVE35') {
+                discount = 35;
+                updateTotal();
+                alert('35% discount applied!');
+            }
+            else if (couponCode === 'SAVE40') {
+                discount = 40;
+                updateTotal();
+                alert('40% discount applied!');
+            }
+            else if (couponCode === 'SAVE45') {
+                discount = 45;
+                updateTotal();
+                alert('45% discount applied!');
+            }
+            else if (couponCode === 'SAVE50') {
+                discount = 50;
+                updateTotal();
+                alert('50% discount applied!');
+            }
+            else if (couponCode === '0%' || couponCode === 'ZERO' || couponCode === 'NOOFF') {
+                discount = 0;
+                updateTotal();
+                alert('0% discount applied! Your total remains $149.50');
+            }
+            else if (couponCode === '') {
+                alert('Please enter a coupon code');
+            }
+            else {
+                alert('Invalid coupon code! Try: SAVE5, SAVE10, SAVE15, SAVE20, SAVE25, SAVE30, SAVE35, SAVE40, SAVE45, SAVE50');
+            }
+            
+            couponInput.value = '';
+        });
+    }
+});
+// Proceed to Checkout functionality
+const checkoutBtn = document.querySelector('#subtotal .normal:last-child');
+    
+if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Check if cart is empty
+        const cartItems = document.querySelectorAll('#cart tbody tr');
+        const totalAmount = document.querySelector('#subtotal table tr:last-child td:last-child').innerText;
+        
+        if (cartItems.length === 0) {
+            alert(' Your cart is empty! Please add some items before checkout.');
+            return;
+        }
+        
+        // Show confirmation
+        const confirmCheckout = confirm(` Proceed to Checkout?\n\nTotal Amount: ${totalAmount}\n\nClick OK to continue.`);
+        
+        if (confirmCheckout) {
+            // Success message
+            alert(` Order placed successfully!\n\nTotal: ${totalAmount}\n\nThank you for shopping with us!`);
+            
+            // Optional: Redirect to checkout page
+            // window.location.href = "checkout.html";
+            
+            // Optional: Clear cart after checkout
+            // cartItems.forEach(row => row.remove());
+            // updateTotal(0);
+        }
+    });
+}
