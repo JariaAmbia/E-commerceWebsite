@@ -2172,7 +2172,7 @@ button.normal{
         opacity: 0;
     }
 }
-.signin-modal {
+.modal {
     display: none;
     position: fixed;
     z-index: 9999;
@@ -2180,71 +2180,105 @@ button.normal{
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.5);
     justify-content: center;
     align-items: center;
 }
 
-.signin-modal-content {
-    background-color: white;
+.modal-box {
+    background: white;
     border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
+    width: 350px;
+    padding: 25px;
+    text-align: center;
 }
 
-.signin-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid #ddd;
-}
-
-.signin-modal-header h2 {
-    margin: 0;
-    color: #333;
-}
-
-.signin-close {
-    font-size: 28px;
-    cursor: pointer;
-    color: #666;
-}
-
-.signin-close:hover {
-    color: red;
-}
-
-.signin-modal-body {
-    padding: 20px;
-}
-
-.signin-modal-body input {
+.modal-box input {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.modal-box button {
+    width: 100%;
+    padding: 10px;
+    background: #088178;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.modal-box .close {
+    float: right;
+    font-size: 25px;
+    cursor: pointer;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-box {
+    background: white;
+    border-radius: 10px;
+    width: 350px;
+    padding: 25px;
+    text-align: center;
+}
+
+.modal-box input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
     border: 1px solid #ddd;
     border-radius: 5px;
     box-sizing: border-box;
 }
 
-.signin-modal-body button {
+.modal-box button {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     background: #088178;
     color: white;
     border: none;
     border-radius: 5px;
+    margin-top: 10px;
     cursor: pointer;
-    font-size: 16px;
 }
 
-.signin-modal-body button:hover {
-    background: #06665e;
+.modal-box button:hover {
+    opacity: 0.9;
 }
 
-.signin-modal-body a {
+.modal-box .close {
+    float: right;
+    font-size: 25px;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-box .close:hover {
+    color: red;
+}
+
+.modal-box a {
     color: #088178;
-    text-decoration: none;
     cursor: pointer;
+    text-decoration: none;
+}
+
+.modal-box a:hover {
+    text-decoration: underline;
 }
