@@ -2348,3 +2348,241 @@ button.normal{
 .modal-box a:hover {
     text-decoration: underline;
 }
+/*DELIVERY TRACKING */
+
+.tracking-section{
+
+    width:100%;
+
+    padding:50px 20px;
+
+    background:#f4f4f4;
+}
+
+
+.tracking-container{
+
+    max-width:1000px;
+
+    margin:auto;
+
+    background:#fff;
+
+    padding:40px;
+
+    border-radius:15px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.1);
+
+    text-align:center;
+}
+
+
+/* TITLE */
+
+.tracking-container h2{
+
+    margin-bottom:50px;
+
+    color:#088178;
+
+    font-size:35px;
+}
+
+
+/* STATUS AREA */
+
+.tracking-status{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-wrap:wrap;
+}
+
+
+/* STEP */
+
+.step{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+}
+
+
+/* CIRCLE */
+
+.circle{
+
+    width:70px;
+
+    height:70px;
+
+    border-radius:50%;
+
+    background:#dcdcdc;
+
+    color:#fff;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    transition:0.4s;
+}
+
+
+/* TEXT */
+
+.step p{
+
+    margin-top:12px;
+
+    font-size:16px;
+
+    color:#555;
+
+    font-weight:600;
+}
+
+
+/* LINE */
+
+.line{
+
+    width:120px;
+
+    height:6px;
+
+    background:#dcdcdc;
+
+    margin:0 10px;
+
+    border-radius:10px;
+
+    transition:0.4s;
+}
+
+
+/* ACTIVE STEP */
+
+.active .circle{
+
+    background:#088178;
+
+    box-shadow:0 0 15px rgba(8,129,120,0.5);
+}
+
+
+/* ACTIVE TEXT */
+
+.active p{
+
+    color:#088178;
+}
+
+
+/* ACTIVE LINE */
+
+.active-line{
+
+    background:#088178;
+}
+
+
+/* BUTTON AREA */
+
+.btn-area{
+
+    margin-top:50px;
+}
+
+
+/* BUTTON */
+
+#nextBtn,
+#backBtn{
+
+    padding:15px 30px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    color:#fff;
+
+    transition:0.3s;
+
+    margin:10px;
+}
+
+
+/* NEXT BUTTON */
+
+#nextBtn{
+
+    background:#004d43;
+}
+
+
+/* BACK BUTTON */
+
+#backBtn{
+
+    background:#016a5c;
+}
+
+
+/* HOVER */
+
+#nextBtn:hover{
+
+    background:#06645e;
+}
+
+
+#backBtn:hover{
+
+    background:#427177;
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+    .tracking-status{
+
+        flex-direction:column;
+    }
+
+    .line{
+
+        width:6px;
+
+        height:70px;
+
+        margin:10px 0;
+    }
+
+    .tracking-container h2{
+
+        font-size:28px;
+    }
+}

@@ -1138,5 +1138,94 @@ document.addEventListener('DOMContentLoaded', function() {
     updateIconStatus();
 });
 
-// Also run after any page refresh
-updateIconStatus();
+// DELIVERY TRACKING SYSTEM
+const steps = [
+
+    document.getElementById("step1"),
+    document.getElementById("step2"),
+    document.getElementById("step3"),
+    document.getElementById("step4")
+
+];
+
+
+const lines = [
+
+    document.getElementById("line1"),
+    document.getElementById("line2"),
+    document.getElementById("line3")
+
+];
+
+
+
+const nextBtn = document.getElementById("nextBtn");
+
+const backBtn = document.getElementById("backBtn");
+
+
+let currentStep = 0;
+
+
+// NEXT BUTTON
+
+
+nextBtn.addEventListener("click", () => {
+
+  
+    if(currentStep < steps.length - 1){
+
+       
+        currentStep++;
+
+        
+        steps[currentStep].classList.add("active");
+
+      
+        lines[currentStep - 1].classList.add("active-line");
+
+    }
+
+    //  Delivered 
+    if(currentStep === steps.length - 1){
+
+        nextBtn.innerText = "Order Delivered";
+
+        nextBtn.style.background = "green";
+
+    }else{
+
+        nextBtn.innerText = "Update Delivery Status";
+
+        nextBtn.style.background = "#088178";
+
+    }
+
+});
+
+
+
+// BACK BUTTON//
+
+backBtn.addEventListener("click", () => {
+
+  
+    if(currentStep > 0){
+
+       
+        steps[currentStep].classList.remove("active");
+
+      
+        lines[currentStep - 1].classList.remove("active-line");
+
+     
+        currentStep--;
+
+    }
+
+   
+    nextBtn.innerText = "Update Delivery Status";
+
+    nextBtn.style.background = "#088178";
+
+});
