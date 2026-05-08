@@ -826,107 +826,134 @@ window.addEventListener('load', function() {
     console.log('Cart system loaded - products should display normally');
     
 });
-// Contact Form - Save ALL messages to ONE file
-const contactForm = document.querySelector('.Form-details form');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
+
+
+// Coupon functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const applyBtn = document.querySelector('#coupon .normal');
+    const couponInput = document.querySelector('#coupon input[type="text"]');
+    let discount = 0;
+    
+    function updateTotal() {
+        let subtotal = 129.50;
+        const shipping = 20.00;
+        
+        const discountAmount = (subtotal * discount) / 100;
+        const newSubtotal = subtotal - discountAmount;
+        const finalTotal = newSubtotal + shipping;
+        
+        const rows = document.querySelectorAll('#subtotal table tr');
+        if (rows[0]) rows[0].cells[1].innerHTML = `$${newSubtotal.toFixed(2)}`;
+        if (rows[2]) rows[2].cells[1].innerHTML = `<strong>$${finalTotal.toFixed(2)}</strong>`;
+        
+        // Show discount message
+        console.log(`${discount}% discount applied`);
+    }
+    
+    if (applyBtn) {
+        applyBtn.addEventListener('click', function() {
+            const couponCode = couponInput.value.toUpperCase();
+            
+            // 5% to 50% discounts
+            if (couponCode === 'SAVE5') {
+                discount = 5;
+                updateTotal();
+                alert('5% discount applied!');
+            }
+            else if (couponCode === 'SAVE10') {
+                discount = 10;
+                updateTotal();
+                alert('10% discount applied!');
+            }
+            else if (couponCode === 'SAVE15') {
+                discount = 15;
+                updateTotal();
+                alert('15% discount applied!');
+            }
+            else if (couponCode === 'SAVE20') {
+                discount = 20;
+                updateTotal();
+                alert('20% discount applied!');
+            }
+            else if (couponCode === 'SAVE25') {
+                discount = 25;
+                updateTotal();
+                alert('25% discount applied!');
+            }
+            else if (couponCode === 'SAVE30') {
+                discount = 30;
+                updateTotal();
+                alert('30% discount applied!');
+            }
+            else if (couponCode === 'SAVE35') {
+                discount = 35;
+                updateTotal();
+                alert('35% discount applied!');
+            }
+            else if (couponCode === 'SAVE40') {
+                discount = 40;
+                updateTotal();
+                alert('40% discount applied!');
+            }
+            else if (couponCode === 'SAVE45') {
+                discount = 45;
+                updateTotal();
+                alert('45% discount applied!');
+            }
+            else if (couponCode === 'SAVE50') {
+                discount = 50;
+                updateTotal();
+                alert('50% discount applied!');
+            }
+            else if (couponCode === '0%' || couponCode === 'ZERO' || couponCode === 'NOOFF') {
+                discount = 0;
+                updateTotal();
+                alert('0% discount applied! Your total remains $149.50');
+            }
+            else if (couponCode === '') {
+                alert('Please enter a coupon code');
+            }
+            else {
+                alert('Invalid coupon code! Try: SAVE5, SAVE10, SAVE15, SAVE20, SAVE25, SAVE30, SAVE35, SAVE40, SAVE45, SAVE50');
+            }
+            
+            couponInput.value = '';
+        });
+    }
+});
+// Proceed to Checkout functionality
+const checkoutBtn = document.querySelector('#subtotal .normal:last-child');
+    
+if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
         
-        // Get form data
-        const name = contactForm.querySelector('input[placeholder="Name"]')?.value || '';
-        const email = contactForm.querySelector('input[placeholder="E-mail"]')?.value || '';
-        const subject = contactForm.querySelector('input[placeholder="Subject"]')?.value || '';
-        const message = contactForm.querySelector('textarea[placeholder="Your Message"]')?.value || '';
-        const date = new Date().toLocaleString();
+        // Check if cart is empty
+        const cartItems = document.querySelectorAll('#cart tbody tr');
+        const totalAmount = document.querySelector('#subtotal table tr:last-child td:last-child').innerText;
         
-        // Get existing messages from localStorage
-        let allMessages = localStorage.getItem('allContactMessages') || '';
-        
-        // Add new message
-        const newMessage = `
-========================================
-NEW MESSAGE - ${date}
-========================================
-Name: ${name}
-Email: ${email}
-Subject: ${subject}
-Message: ${message}
-----------------------------------------
-        `;
-        
-        allMessages += newMessage;
-        
-        // Save to localStorage
-        localStorage.setItem('allContactMessages', allMessages);
-        
-        // Also save count
-        let messageCount = parseInt(localStorage.getItem('messageCount') || '0');
-        messageCount++;
-        localStorage.setItem('messageCount', messageCount);
-        
-        // Clear form
-        contactForm.reset();
+        if (cartItems.length === 0) {
+            alert(' Your cart is empty! Please add some items before checkout.');
+            return;
+        }
         
         // Show confirmation
-        alert(`✓ Message #${messageCount} saved! Download the file to see all messages.`);
+        const confirmCheckout = confirm(` Proceed to Checkout?\n\nTotal Amount: ${totalAmount}\n\nClick OK to continue.`);
+        
+        if (confirmCheckout) {
+            // Success message
+            alert(` Order placed successfully!\n\nTotal: ${totalAmount}\n\nThank you for shopping with us!`);
+            
+            // Optional: Redirect to checkout page
+            // window.location.href = "checkout.html";
+            
+            // Optional: Clear cart after checkout
+            // cartItems.forEach(row => row.remove());
+            // updateTotal(0);
+        }
     });
 }
 
-// Function to download ALL messages (add a button for this)
-function downloadAllMessages() {
-    const allMessages = localStorage.getItem('allContactMessages');
-    
-    if (!allMessages || allMessages.trim() === '') {
-        alert('No messages yet!');
-        return;
-    }
-    
-    const messageCount = localStorage.getItem('messageCount') || '0';
-    const date = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-    
-    const header = `CONTACT FORM MESSAGES
-Total Messages: ${messageCount}
-Last Updated: ${new Date().toLocaleString()}
-========================================\n`;
-    
-    const blob = new Blob([header + allMessages], {type: 'text/plain'});
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    
-    link.href = url;
-    link.download = `all-contact-messages-${date}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    
-    alert(`Downloaded ${messageCount} messages!`);
-}
-
-// Add a "Download All Messages" button to your page
-function addDownloadButton() {
-    const formSection = document.querySelector('.Form-details');
-    if (formSection && !document.querySelector('#downloadMessagesBtn')) {
-        const btn = document.createElement('button');
-        btn.id = 'downloadMessagesBtn';
-        btn.textContent = '📥 Download All Messages';
-        btn.className = 'normal';
-        btn.style.marginTop = '20px';
-        btn.style.background = '#088178';
-        btn.onclick = downloadAllMessages;
-        
-        // Insert after the form
-        const form = formSection.querySelector('form');
-        if (form) {
-            form.after(btn);
-        }
-    }
-}
-
-// Add button when page loads
-if (document.querySelector('.Form-details')) {
-    setTimeout(addDownloadButton, 100);
-}
 // ========== SIGN UP / LOGIN SYSTEM ==========
 
 // Function to check login status and update icon
