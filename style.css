@@ -2132,3 +2132,43 @@ button.normal{
 #subtotal button:hover{
     background:#00695c;
 }
+
+/* Cart page quantity input */
+.cart-quantity {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.cart-quantity:focus {
+    outline: none;
+    border-color: #088178;
+}
+
+/* Cart table styling */
+#cart table tbody tr td {
+    vertical-align: middle;
+}
+
+#cart table tbody tr td a {
+    color: #ff0000;
+    text-decoration: none;
+}
+
+#cart table tbody tr td img {
+    border-radius: 8px;
+}
+
+/* Notification animations */
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}

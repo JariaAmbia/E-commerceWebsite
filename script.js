@@ -201,43 +201,55 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentProductImages = [];
     let currentIndex = 0;
     let currentRotateIndex = 0;
-
-    // Open lightbox when clicking product image
-    document.addEventListener("click", function(e) {
-        if (e.target.classList.contains('product-image')) {
-            const productDiv = e.target.closest('.pro');
-            
-            const clickedTitle = productDiv.querySelector('h5').textContent;
-            const clickedCategory = productDiv.querySelector('.des span').textContent;
-            const clickedPrice = productDiv.querySelector('h4').textContent;
-            const clickedProductId = parseInt(productDiv.id.replace('product-', ''));
-            
-            // Get clicked product's multi-angle images
-            const hiddenContainer = productDiv.querySelector('.product-all-images');
-            if (hiddenContainer) {
-                const hiddenImages = hiddenContainer.querySelectorAll('img');
-                currentProductImages = [...new Set(Array.from(hiddenImages).map(img => img.src))];
-                currentRotateIndex = 0;
-            }
-            
-            // Determine category
-            let productCategoryKey = '';
-            if (clickedCategory.includes("Men's Shirts")) productCategoryKey = 'mens-shirts';
-            else if (clickedCategory.includes("Women's Dresses")) productCategoryKey = 'womens-dresses';
-            else if (clickedCategory.includes("Men's Shoes")) productCategoryKey = 'mens-shoes';
-            else if (clickedCategory.includes("Women's Shoes")) productCategoryKey = 'womens-shoes';
-            
-            const allCategoryProducts = productsByCategory[productCategoryKey] || [];
-            currentRelatedProducts = [...allCategoryProducts];
-            
-            currentIndex = currentRelatedProducts.findIndex(p => p.id === clickedProductId);
-            if (currentIndex === -1) currentIndex = 0;
-            
-            showProductInLightbox(currentIndex);
-            lightbox.style.display = "block";
+// Open lightbox when clicking product image
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains('product-image')) {
+        const productDiv = e.target.closest('.pro');
+        
+        const clickedTitle = productDiv.querySelector('h5').textContent;
+        const clickedCategory = productDiv.querySelector('.des span').textContent;
+        const clickedPrice = productDiv.querySelector('h4').textContent;
+        const clickedProductId = productDiv.id ? parseInt(productDiv.id.replace('product-', '')) : null;
+        
+        // Get clicked product's multi-angle images
+        const hiddenContainer = productDiv.querySelector('.product-all-images');
+        if (hiddenContainer) {
+            const hiddenImages = hiddenContainer.querySelectorAll('img');
+            currentProductImages = [...new Set(Array.from(hiddenImages).map(img => img.src))];
+            currentRotateIndex = 0;
         }
-    });
-    
+        
+        // Determine category
+        let productCategoryKey = '';
+        if (clickedCategory.includes("Men's Shirts")) productCategoryKey = 'mens-shirts';
+        else if (clickedCategory.includes("Women's Dresses")) productCategoryKey = 'womens-dresses';
+        else if (clickedCategory.includes("Men's Shoes")) productCategoryKey = 'mens-shoes';
+        else if (clickedCategory.includes("Women's Shoes")) productCategoryKey = 'womens-shoes';
+        
+        // For New Arrivals (not in productsByCategory)
+        if (productsByCategory[productCategoryKey] && productsByCategory[productCategoryKey].length > 0) {
+            currentRelatedProducts = [...productsByCategory[productCategoryKey]];
+            currentIndex = currentRelatedProducts.findIndex(p => p.id === clickedProductId);
+        } else {
+            // Create product data for New Arrivals
+            currentRelatedProducts = [{
+                id: Date.now(),
+                title: clickedTitle,
+                category: clickedCategory,
+                price: parseFloat(clickedPrice.replace('$', '')),
+                images: [productDiv.querySelector('.product-image').src],
+                rating: 4.5
+            }];
+            currentIndex = 0;
+        }
+        
+        if (currentIndex === -1) currentIndex = 0;
+        
+        showProductInLightbox(currentIndex);
+        lightbox.style.display = "block";
+    }
+});
+   
     function showProductInLightbox(index) {
         if (index < 0 || index >= currentRelatedProducts.length) return;
         
@@ -257,18 +269,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         counter.textContent = `${index + 1} / ${currentRelatedProducts.length}`;
         
-        const stock = Math.floor(Math.random() * 20) + 1;
-        if (stock > 10) {
-            productStock.textContent = `✓ In Stock (${stock} available)`;
-            productStock.className = 'stock-status';
-        } else if (stock > 0) {
-            productStock.textContent = `⚠ Only ${stock} left in stock`;
-            productStock.className = 'stock-status low-stock';
-        } else {
-            productStock.textContent = '✗ Out of Stock';
-            productStock.className = 'stock-status out-stock';
-        }
-        
+       productStock.textContent = '✓ In Stock';
+       productStock.className = 'stock-status';
         const rating = product.rating || 4.5;
         const stars = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
         productStars.textContent = stars;
@@ -679,4 +681,148 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initial display
     displayBlogPosts();
+});
+
+// ========== SIMPLE CART SYSTEM - SAFE VERSION ==========
+// This version will NOT break your existing functionality
+
+// Wait for everything to load first
+window.addEventListener('load', function() {
+    
+    // Get cart from storage
+    function getCart() {
+        const cart = localStorage.getItem('simpleCart');
+        return cart ? JSON.parse(cart) : [];
+    }
+    
+    // Save cart
+    function saveCart(cart) {
+        localStorage.setItem('simpleCart', JSON.stringify(cart));
+    }
+    
+    // Add to cart function
+    window.addToCartFunction = function() {
+        // Get product details from lightbox
+        const title = document.getElementById('product-title')?.innerText;
+        const priceText = document.getElementById('product-price')?.innerText;
+        const image = document.getElementById('lightbox-img')?.src;
+        
+        if (!title || !priceText) {
+            alert('Could not get product details');
+            return;
+        }
+        
+        const price = parseFloat(priceText.replace('$', ''));
+        
+        let cart = getCart();
+        
+        // Check if product exists
+        const existing = cart.find(item => item.title === title);
+        
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({
+                id: Date.now(),
+                title: title,
+                price: price,
+                image: image,
+                quantity: 1
+            });
+        }
+        
+        saveCart(cart);
+        
+        // Show notification
+        const notif = document.createElement('div');
+        notif.textContent = title + ' added to cart!';
+        notif.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#088178;color:white;padding:10px 20px;border-radius:5px;z-index:9999;';
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 2000);
+        
+        // Update cart count if on cart page
+        if (window.location.pathname.includes('cart.html')) {
+            location.reload();
+        }
+    };
+    
+    // Attach to the add to cart button
+    function attachButton() {
+        const btn = document.querySelector('.add-to-cart-btn');
+        if (btn && !btn.hasAttribute('data-attached')) {
+            btn.setAttribute('data-attached', 'true');
+            btn.onclick = function(e) {
+                e.preventDefault();
+                window.addToCartFunction();
+            };
+        }
+    }
+    
+    // Keep trying to attach the button (in case lightbox loads late)
+    attachButton();
+    setInterval(attachButton, 500);
+    
+    // ========== CART PAGE DISPLAY ==========
+    if (window.location.pathname.includes('cart.html')) {
+        displayCart();
+    }
+    
+    function displayCart() {
+        const cart = getCart();
+        const tbody = document.querySelector('#cart tbody');
+        
+        if (!tbody) return;
+        
+        if (cart.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Your cart is empty</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = '';
+        let subtotal = 0;
+        
+        cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+            
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td><button onclick="removeItem(${index})" style="background:none;border:none;color:red;cursor:pointer">✖</button></td>
+                <td><img src="${item.image}" width="50"></td>
+                <td>${item.title}</td>
+                <td>$${item.price}</td>
+                <td><input type="number" value="${item.quantity}" min="1" onchange="updateQty(${index}, this.value)" style="width:60px"></td>
+                <td>$${itemTotal.toFixed(2)}</td>
+            `;
+        });
+        
+        // Update totals
+        const shipping = subtotal > 0 ? 20 : 0;
+        const total = subtotal + shipping;
+        
+        const subtotalCell = document.querySelector('#subtotal table tr:first-child td:last-child');
+        const totalCell = document.querySelector('#subtotal table tr:last-child td:last-child strong');
+        
+        if (subtotalCell) subtotalCell.innerHTML = `$${subtotal.toFixed(2)}`;
+        if (totalCell) totalCell.innerHTML = `$${total.toFixed(2)}`;
+    }
+    
+    // Global functions for cart page
+    window.removeItem = function(index) {
+        let cart = getCart();
+        cart.splice(index, 1);
+        saveCart(cart);
+        displayCart();
+    };
+    
+    window.updateQty = function(index, newQty) {
+        let cart = getCart();
+        cart[index].quantity = parseInt(newQty);
+        saveCart(cart);
+        displayCart();
+    };
+    
+    // Fix: Make sure your existing product loading still works
+    console.log('Cart system loaded - products should display normally');
+    
 });
