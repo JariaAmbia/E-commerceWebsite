@@ -826,3 +826,339 @@ window.addEventListener('load', function() {
     console.log('Cart system loaded - products should display normally');
     
 });
+// Contact Form - Save ALL messages to ONE file
+const contactForm = document.querySelector('.Form-details form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const name = contactForm.querySelector('input[placeholder="Name"]')?.value || '';
+        const email = contactForm.querySelector('input[placeholder="E-mail"]')?.value || '';
+        const subject = contactForm.querySelector('input[placeholder="Subject"]')?.value || '';
+        const message = contactForm.querySelector('textarea[placeholder="Your Message"]')?.value || '';
+        const date = new Date().toLocaleString();
+        
+        // Get existing messages from localStorage
+        let allMessages = localStorage.getItem('allContactMessages') || '';
+        
+        // Add new message
+        const newMessage = `
+========================================
+NEW MESSAGE - ${date}
+========================================
+Name: ${name}
+Email: ${email}
+Subject: ${subject}
+Message: ${message}
+----------------------------------------
+        `;
+        
+        allMessages += newMessage;
+        
+        // Save to localStorage
+        localStorage.setItem('allContactMessages', allMessages);
+        
+        // Also save count
+        let messageCount = parseInt(localStorage.getItem('messageCount') || '0');
+        messageCount++;
+        localStorage.setItem('messageCount', messageCount);
+        
+        // Clear form
+        contactForm.reset();
+        
+        // Show confirmation
+        alert(`✓ Message #${messageCount} saved! Download the file to see all messages.`);
+    });
+}
+
+// Function to download ALL messages (add a button for this)
+function downloadAllMessages() {
+    const allMessages = localStorage.getItem('allContactMessages');
+    
+    if (!allMessages || allMessages.trim() === '') {
+        alert('No messages yet!');
+        return;
+    }
+    
+    const messageCount = localStorage.getItem('messageCount') || '0';
+    const date = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    
+    const header = `CONTACT FORM MESSAGES
+Total Messages: ${messageCount}
+Last Updated: ${new Date().toLocaleString()}
+========================================\n`;
+    
+    const blob = new Blob([header + allMessages], {type: 'text/plain'});
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.href = url;
+    link.download = `all-contact-messages-${date}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    alert(`Downloaded ${messageCount} messages!`);
+}
+
+// Add a "Download All Messages" button to your page
+function addDownloadButton() {
+    const formSection = document.querySelector('.Form-details');
+    if (formSection && !document.querySelector('#downloadMessagesBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'downloadMessagesBtn';
+        btn.textContent = '📥 Download All Messages';
+        btn.className = 'normal';
+        btn.style.marginTop = '20px';
+        btn.style.background = '#088178';
+        btn.onclick = downloadAllMessages;
+        
+        // Insert after the form
+        const form = formSection.querySelector('form');
+        if (form) {
+            form.after(btn);
+        }
+    }
+}
+
+// Add button when page loads
+if (document.querySelector('.Form-details')) {
+    setTimeout(addDownloadButton, 100);
+}
+
+// ========== SIGN IN SYSTEM ==========
+
+// Run when page loads
+window.addEventListener('load', function() {
+    // Find all links in footer
+    const footerLinks = document.querySelectorAll('footer a');
+    
+    // Find the Sign In link
+    let signInLink = null;
+    for(let i = 0; i < footerLinks.length; i++) {
+        if(footerLinks[i].innerText === 'Sign In') {
+            signInLink = footerLinks[i];
+            break;
+        }
+    }
+    
+    if(signInLink) {
+        signInLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showSignInPopup();
+        });
+    }
+    
+    // Update button text if user is logged in
+    const savedName = localStorage.getItem('userName');
+    if(savedName && signInLink) {
+        signInLink.innerText = '👤 ' + savedName;
+    }
+});
+
+function showSignInPopup() {
+    // Create popup
+    const popup = document.createElement('div');
+    popup.id = 'signin-popup';
+    popup.className = 'signin-modal';
+    popup.style.display = 'flex';
+    
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    
+    if(isLoggedIn) {
+        // Show welcome screen
+        const userName = localStorage.getItem('userName');
+        popup.innerHTML = `
+            <div class="signin-modal-content">
+                <div class="signin-modal-header">
+                    <h2>My Account</h2>
+                    <span class="signin-close">&times;</span>
+                </div>
+                <div class="signin-modal-body" style="text-align:center;">
+                    <i class="fas fa-check-circle" style="font-size:50px; color:#088178;"></i>
+                    <h3>Welcome, ${userName}!</h3>
+                    <p>You are logged in</p>
+                    <button id="logout-btn" class="normal">Logout</button>
+                </div>
+            </div>
+        `;
+    } else {
+        // Show login screen
+        popup.innerHTML = `
+            <div class="signin-modal-content">
+                <div class="signin-modal-header">
+                    <h2>Sign In</h2>
+                    <span class="signin-close">&times;</span>
+                </div>
+                <div class="signin-modal-body">
+                    <input type="email" id="login-email" placeholder="Email Address">
+                    <input type="password" id="login-password" placeholder="Password">
+                    <button id="login-btn" class="normal">Login</button>
+                    <p style="text-align:center; margin-top:15px;">
+                        Don't have an account? 
+                        <a id="show-signup">Sign Up</a>
+                    </p>
+                </div>
+            </div>
+        `;
+    }
+    
+    document.body.appendChild(popup);
+    
+    // Close button
+    const closeBtn = popup.querySelector('.signin-close');
+    if(closeBtn) {
+        closeBtn.onclick = function() {
+            popup.remove();
+        };
+    }
+    
+    // Click outside to close
+    popup.onclick = function(e) {
+        if(e.target === popup) {
+            popup.remove();
+        }
+    };
+    
+    // Handle login
+    const loginBtn = document.getElementById('login-btn');
+    if(loginBtn) {
+        loginBtn.onclick = function() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if(!email || !password) {
+                alert('Please enter email and password');
+                return;
+            }
+            
+            // Get users from storage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if(user) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userName', user.name);
+                alert('Login successful! Welcome ' + user.name);
+                popup.remove();
+                location.reload();
+            } else {
+                alert('Invalid email or password. Please sign up first.');
+            }
+        };
+    }
+    
+    // Show sign up
+    const showSignup = document.getElementById('show-signup');
+    if(showSignup) {
+        showSignup.onclick = function() {
+            showSignUpPopup();
+            popup.remove();
+        };
+    }
+    
+    // Handle logout
+    const logoutBtn = document.getElementById('logout-btn');
+    if(logoutBtn) {
+        logoutBtn.onclick = function() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userName');
+            alert('Logged out successfully');
+            popup.remove();
+            location.reload();
+        };
+    }
+}
+
+function showSignUpPopup() {
+    const popup = document.createElement('div');
+    popup.className = 'signin-modal';
+    popup.style.display = 'flex';
+    
+    popup.innerHTML = `
+        <div class="signin-modal-content">
+            <div class="signin-modal-header">
+                <h2>Create Account</h2>
+                <span class="signin-close">&times;</span>
+            </div>
+            <div class="signin-modal-body">
+                <input type="text" id="signup-name" placeholder="Full Name">
+                <input type="email" id="signup-email" placeholder="Email Address">
+                <input type="password" id="signup-password" placeholder="Password">
+                <input type="password" id="signup-confirm" placeholder="Confirm Password">
+                <button id="signup-btn" class="normal">Create Account</button>
+                <p style="text-align:center; margin-top:15px;">
+                    Already have an account? 
+                    <a id="show-login">Sign In</a>
+                </p>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Close button
+    const closeBtn = popup.querySelector('.signin-close');
+    if(closeBtn) {
+        closeBtn.onclick = function() {
+            popup.remove();
+        };
+    }
+    
+    popup.onclick = function(e) {
+        if(e.target === popup) {
+            popup.remove();
+        }
+    };
+    
+    // Handle sign up
+    const signupBtn = document.getElementById('signup-btn');
+    if(signupBtn) {
+        signupBtn.onclick = function() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('signup-confirm').value;
+            
+            if(!name || !email || !password) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            if(password !== confirm) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            // Get existing users
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Check if email exists
+            if(users.find(u => u.email === email)) {
+                alert('Email already registered! Please login.');
+                return;
+            }
+            
+            // Save new user
+            users.push({ name, email, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userName', name);
+            
+            alert('Account created successfully! Welcome ' + name);
+            popup.remove();
+            location.reload();
+        };
+    }
+    
+    // Show login
+    const showLogin = document.getElementById('show-login');
+    if(showLogin) {
+        showLogin.onclick = function() {
+            showSignInPopup();
+            popup.remove();
+        };
+    }
+}
