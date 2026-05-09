@@ -1411,7 +1411,7 @@ text-align: center;
 }
 
 /* Admin Panel - Slides from Right */
-.admin-modal {
+/*.admin-modal {
     display: none;
     position: fixed;
     z-index: 10000;
@@ -1446,7 +1446,7 @@ text-align: center;
     color: white;
     border-radius: 0;
 }
-
+*/
 /* MAP STYLE */
 .contact-map iframe{
     width:100%;

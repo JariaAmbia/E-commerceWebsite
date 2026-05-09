@@ -1,7 +1,6 @@
 
-// Store products by category for related products
 let productsByCategory = {};
-// ========== SECTION 1: FEATURED PRODUCTS (4 items per category) ==========
+// FEATURED PRODUCTS 
 Promise.all([
     fetch("https://dummyjson.com/products/category/mens-shirts?limit=10").then(res => res.json()),
     fetch("https://dummyjson.com/products/category/womens-dresses?limit=10").catch(() => ({products: []})),
@@ -22,7 +21,7 @@ Promise.all([
     }
     container.innerHTML = '';
 
-    // Take only 4 items from each category
+    // Take  4 items 
     const shirtsProducts = shirts.products?.slice(0, 4) || [];
     const dressesProducts = dresses.products?.slice(0, 4) || [];
     const shoesProducts = shoes.products?.slice(0, 4) || [];
@@ -104,7 +103,7 @@ Promise.all([
     }
 });
 
-// ========== SECTION 2: NEW ARRIVALS (8 products from NEW categories - Bags, Watches, Sunglasses, Jewelry) ==========
+//  NEW ARRIVALS 
 document.addEventListener('DOMContentLoaded', function() {
     // Get products from completely different categories
     Promise.all([
@@ -179,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ========== LIGHTBOX WITH RELATED PRODUCTS (Fixed - Shows clicked product first) ==========
+//  LIGHTBOX 
 document.addEventListener('DOMContentLoaded', function() {
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
@@ -296,7 +295,7 @@ document.addEventListener("click", function(e) {
         });
     }
     
-    // FIXED: Separate rotate button handler for lightbox ONLY
+    //  Separate rotate button handler for lightbox 
     document.addEventListener('click', function(e) {
         const rotateBtn = e.target.closest('.rotate-btn');
         if (rotateBtn && lightbox.style.display === "block") {
@@ -354,7 +353,7 @@ document.addEventListener("click", function(e) {
     });
 });
 
-// ========== ROTATE BUTTON FOR SHOP PAGE (Outside lightbox) ==========
+//  ROTATE BUTTON FOR SHOP PAGE (Outside lightbox) 
 document.addEventListener('click', function(e) {
     const rotateBtn = e.target.closest('.rotate-btn');
     if (rotateBtn && lightbox.style.display !== "block") {
@@ -413,7 +412,7 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// ========== MOBILE MENU FUNCTIONALITY ==========
+
 const bar = document.getElementById('bar');
 const close = document.getElementById('close');
 const nav = document.getElementById('navbar');
@@ -428,71 +427,181 @@ if(close){
         nav.classList.remove('active');
     });
 }
-// Admin Panel JavaScript
+// Complete Admin Panel with Login System for Blog Page
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Default blog posts
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "1234";
+    const SESSION_KEY = 'admin_session';
+    const BLOG_KEY = 'blogPosts';
+    
+    // Default blog posts (matching your HTML)
     const defaultPosts = [
         {
+            id: '1',
             title: "Stylish t-shirt with a comfortable fit and premium quality fabric.",
-            description: "The t-shirt feels very smooth on the skin and is perfect for daily wear.",
+            description: "The t-shirt feels very smooth on the skin and is perfect for daily wear. Its color and design look trendy, making it a great choice for casual outfits",
             image: "image/blog1.jpg",
             date: "13/01"
         },
         {
+            id: '2',
             title: "How to style a Quiff",
-            description: "To style a quiff, start by applying a light product for texture and volume.",
+            description: "To style a quiff, start by applying a light product for texture and volume to slightly damp hair, then blow‑dry while lifting the front section upward and backward to create height and shape.",
             image: "image/blog2.png",
             date: "13/01"
         },
         {
+            id: '3',
             title: "Must-Have skater girl items.",
-            description: "Skater girls always need the essentials to stay stylish and comfortable.",
+            description: "Skater girls always need the essentials to stay stylish and comfortable on their boards. From durable sneakers to trendy graphic tees, these items make skating fun and effortless.",
             image: "image/blog3.png",
             date: "13/01"
         },
         {
+            id: '4',
             title: "Runway inspired trends.",
-            description: "Fashion lovers can bring high-end runway looks into their everyday wardrobe.",
+            description: "Fashion lovers can bring high-end runway looks into their everyday wardrobe. Bold prints, statement accessories, and chic silhouettes make any outfit stand out.",
             image: "image/b7.png",
             date: "13/01"
         },
         {
+            id: '5',
             title: "AW20 menswear trends",
-            description: "Autumn/Winter 2020 menswear showcased rich textures and layered outfits.",
+            description: "Autumn/Winter 2020 menswear showcased rich textures and layered outfits. Oversized coats, tailored suits, and earthy tones defined the season's style.",
             image: "image/blog4.jpg",
             date: "13/01"
         }
     ];
     
-    // Load or initialize posts
-    let blogPosts = JSON.parse(localStorage.getItem('blogPosts'));
-    if (!blogPosts || blogPosts.length === 0) {
-        blogPosts = [...defaultPosts];
-        localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
+    // State
+    let isLoggedIn = false;
+    let blogPosts = [];
+    
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+    function init() {
+        checkLoginStatus();
+        loadPosts();
+        setupAdminPanel();
+        displayBlogPosts();
+        updateAdminIcon();
+        injectStyles();
+        
+        // Remove duplicate admin button and use the one in navbar
+        const floatingBtn = document.getElementById('admin-icon');
+        if (floatingBtn && floatingBtn.style.position === 'fixed') {
+            floatingBtn.remove(); // Remove floating button, use navbar one instead
+        }
     }
     
-    // Display blog posts
+    function checkLoginStatus() {
+        const session = localStorage.getItem(SESSION_KEY);
+        if (session) {
+            try {
+                const data = JSON.parse(session);
+                if (data.expires > Date.now()) {
+                    isLoggedIn = true;
+                } else {
+                    localStorage.removeItem(SESSION_KEY);
+                    isLoggedIn = false;
+                }
+            } catch(e) {
+                isLoggedIn = false;
+            }
+        }
+    }
+    
+    function saveLoginSession() {
+        const session = {
+            loggedIn: true,
+            expires: Date.now() + (7 * 24 * 60 * 60 * 1000)
+        };
+        localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        isLoggedIn = true;
+        updateAdminIcon();
+    }
+    
+    function logout() {
+        localStorage.removeItem(SESSION_KEY);
+        isLoggedIn = false;
+        updateAdminIcon();
+        closeAdminPanel();
+        showToast('Logged out successfully', 'success');
+    }
+    
+    function loadPosts() {
+        const stored = localStorage.getItem(BLOG_KEY);
+        if (stored) {
+            blogPosts = JSON.parse(stored);
+        } else {
+            blogPosts = [...defaultPosts];
+            localStorage.setItem(BLOG_KEY, JSON.stringify(blogPosts));
+        }
+    }
+    
+    function savePosts() {
+        localStorage.setItem(BLOG_KEY, JSON.stringify(blogPosts));
+    }
+    
+    function updateAdminIcon() {
+        const adminIcon = document.getElementById('admin-icon');
+        const mobileAdminIcon = document.getElementById('mobile-admin');
+        
+        if (adminIcon) {
+            const icon = adminIcon.querySelector('i');
+            if (icon) {
+                if (isLoggedIn) {
+                    icon.style.color = '#2ecc71';
+                    adminIcon.title = 'Admin Panel (Logged in)';
+                } else {
+                    icon.style.color = '#e74c3c';
+                    adminIcon.title = 'Admin Login (Click to login)';
+                }
+            }
+        }
+        
+        if (mobileAdminIcon) {
+            const icon = mobileAdminIcon.querySelector('i');
+            if (icon) {
+                if (isLoggedIn) {
+                    icon.style.color = '#2ecc71';
+                } else {
+                    icon.style.color = '#e74c3c';
+                }
+            }
+        }
+    }
+    
+    // ============================================
+    // BLOG DISPLAY
+    // ============================================
     function displayBlogPosts() {
         const blogContainer = document.getElementById('blog');
         if (!blogContainer) return;
         
-        blogContainer.innerHTML = '';
-        blogPosts.forEach(post => {
-            blogContainer.innerHTML += `
-            <div class="blog-box">
+        if (blogPosts.length === 0) {
+            blogContainer.innerHTML = '<div style="text-align:center; padding:60px;"><h3>No blog posts yet</h3><p>Check back soon!</p></div>';
+            return;
+        }
+        
+        blogContainer.innerHTML = blogPosts.map(post => `
+            <div class="blog-box" data-id="${post.id}">
                 <div class="blog-img">
-                    <img src="${post.image}" alt="${post.title}" onerror="this.src='image/blog1.jpg'">
+                    <img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}" onerror="this.src='image/blog1.jpg'">
                 </div>
                 <div class="blog-details">
                     <h4>${escapeHtml(post.title)}</h4>
-                    <p>${escapeHtml(post.description)}</p>
+                    <p>${escapeHtml(post.description.substring(0, 120))}${post.description.length > 120 ? '...' : ''}</p>
                     <a href="#">CONTINUE READING</a>
                 </div>
                 <h1>${escapeHtml(post.date)}</h1>
             </div>
-            `;
-        });
+        `).join('');
     }
     
     function escapeHtml(str) {
@@ -505,188 +614,477 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Display posts in admin panel
-    function displayAdminPosts() {
-        const postsList = document.getElementById('posts-list');
-        if (!postsList) return;
+    // ============================================
+    // ADMIN PANEL SETUP
+    // ============================================
+    function setupAdminPanel() {
+        const adminModal = document.getElementById('admin-modal');
+        const adminOverlay = document.getElementById('admin-overlay');
+        const adminIcon = document.getElementById('admin-icon');
+        const mobileAdminIcon = document.getElementById('mobile-admin');
+        const closeBtn = document.querySelector('.admin-close');
         
-        if (blogPosts.length === 0) {
-            postsList.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">No posts yet.</p>';
-            return;
+        // Open panel function
+        function openPanel() {
+            if (!isLoggedIn) {
+                showLoginModal();
+                return;
+            }
+            if (adminModal && adminOverlay) {
+                adminModal.style.display = 'block';
+                adminOverlay.style.display = 'block';
+                renderAdminPosts();
+                addLogoutButtonToPanel();
+            }
         }
         
-        postsList.innerHTML = '';
-        blogPosts.forEach((post, index) => {
-            const postDiv = document.createElement('div');
-            postDiv.className = 'admin-post-item';
-            postDiv.innerHTML = `
-                <div class="admin-post-info">
-                    <h4>${escapeHtml(post.title.substring(0, 40))}${post.title.length > 40 ? '...' : ''}</h4>
-                    <p>📅 ${escapeHtml(post.date)}</p>
-                    <small>${escapeHtml(post.description.substring(0, 50))}...</small>
-                </div>
-                <div class="admin-post-actions">
-                    <button class="admin-edit-btn" data-index="${index}">✏️ Edit</button>
-                    <button class="admin-delete-btn" data-index="${index}">🗑️ Delete</button>
-                </div>
-            `;
-            postsList.appendChild(postDiv);
-        });
+        // Attach click events
+        if (adminIcon) adminIcon.onclick = openPanel;
+        if (mobileAdminIcon) mobileAdminIcon.onclick = openPanel;
         
-        // Delete posts
-        document.querySelectorAll('.admin-delete-btn').forEach(btn => {
+        // Close panel
+        if (closeBtn) closeBtn.onclick = closeAdminPanel;
+        if (adminOverlay) adminOverlay.onclick = closeAdminPanel;
+        
+        // Setup create post form
+        const createForm = document.getElementById('create-post-form');
+        if (createForm) {
+            createForm.addEventListener('submit', handleCreatePost);
+        }
+        
+        // Setup tabs
+        const tabBtns = document.querySelectorAll('.admin-tab-btn');
+        tabBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                if (confirm('Delete this post?')) {
-                    blogPosts.splice(index, 1);
-                    localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
-                    displayAdminPosts();
-                    displayBlogPosts();
-                    alert('Post deleted!');
+                const tabId = this.getAttribute('data-tab');
+                tabBtns.forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active-tab'));
+                this.classList.add('active');
+                const target = document.getElementById(tabId);
+                if (target) target.classList.add('active-tab');
+                
+                if (tabId === 'manage-tab' && isLoggedIn) {
+                    renderAdminPosts();
                 }
             });
         });
+    }
+    
+    function closeAdminPanel() {
+        const adminModal = document.getElementById('admin-modal');
+        const adminOverlay = document.getElementById('admin-overlay');
+        if (adminModal) adminModal.style.display = 'none';
+        if (adminOverlay) adminOverlay.style.display = 'none';
+    }
+    
+    function addLogoutButtonToPanel() {
+        const adminHeader = document.querySelector('.admin-modal-header');
+        if (adminHeader && !document.getElementById('panel-logout-btn')) {
+            const logoutBtn = document.createElement('button');
+            logoutBtn.id = 'panel-logout-btn';
+            logoutBtn.innerHTML = '🚪 Logout';
+            logoutBtn.style.cssText = `
+                background: #dc3545;
+                color: white;
+                border: none;
+                padding: 6px 15px;
+                border-radius: 20px;
+                cursor: pointer;
+                margin-left: 15px;
+                font-size: 13px;
+            `;
+            logoutBtn.onclick = () => {
+                logout();
+                renderAdminPosts();
+                closeAdminPanel();
+            };
+            adminHeader.appendChild(logoutBtn);
+        }
+    }
+    
+    function renderAdminPosts() {
+        const postsList = document.getElementById('posts-list');
+        if (!postsList) return;
         
-        // Edit posts with form modal
-        document.querySelectorAll('.admin-edit-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                const post = blogPosts[index];
-                
-                // Create edit modal (centered popup)
-                const editModal = document.createElement('div');
-                editModal.className = 'admin-modal';
-                editModal.style.display = 'flex';
-                editModal.style.alignItems = 'center';
-                editModal.style.justifyContent = 'center';
-                editModal.style.background = 'rgba(0,0,0,0.6)';
-                editModal.style.right = 'auto';
-                editModal.style.width = '100%';
-                editModal.style.animation = 'slideDown 0.3s ease';
-                editModal.innerHTML = `
-                    <div class="admin-modal-content" style="max-width: 500px; margin: 0; border-radius: 15px;">
-                        <div class="admin-modal-header">
-                            <h2><i class="fas fa-edit"></i> Edit Post</h2>
-                            <span class="edit-close" style="font-size:35px; cursor:pointer;">&times;</span>
-                        </div>
-                        <div class="admin-modal-body">
-                            <input type="text" id="edit-title" placeholder="Title" value="${escapeHtml(post.title).replace(/"/g, '&quot;')}" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
-                            <textarea id="edit-desc" placeholder="Description" rows="3" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">${escapeHtml(post.description)}</textarea>
-                            <input type="text" id="edit-image" placeholder="Image URL" value="${escapeHtml(post.image)}" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
-                            <input type="text" id="edit-date" placeholder="Date" value="${escapeHtml(post.date)}" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
-                            <button id="save-edit" style="background:#27ae60; color:white; border:none; padding:12px; width:100%; border-radius:8px; cursor:pointer;">Save Changes</button>
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(editModal);
-                
-                // Close edit modal
-                editModal.querySelector('.edit-close').onclick = () => editModal.remove();
-                editModal.onclick = (e) => { if(e.target === editModal) editModal.remove(); };
-                
-                // Save edited post
-                document.getElementById('save-edit').onclick = () => {
-                    const newTitle = document.getElementById('edit-title').value;
-                    const newDesc = document.getElementById('edit-desc').value;
-                    const newImage = document.getElementById('edit-image').value;
-                    const newDate = document.getElementById('edit-date').value;
-                    
-                    if(newTitle && newDesc && newImage && newDate) {
-                        blogPosts[index] = {
-                            title: newTitle,
-                            description: newDesc,
-                            image: newImage,
-                            date: newDate
-                        };
-                        localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
-                        displayAdminPosts();
-                        displayBlogPosts();
-                        editModal.remove();
-                        alert('Post updated!');
-                    } else {
-                        alert('Please fill all fields');
-                    }
-                };
-            });
-        });
+        if (!isLoggedIn) {
+            postsList.innerHTML = `
+                <div style="text-align:center; padding:50px 20px;">
+                    <i class="fas fa-lock" style="font-size:48px; color:#ccc;"></i>
+                    <h3 style="margin:15px 0 10px;">Login Required</h3>
+                    <p style="color:#666;">Please login to manage blog posts</p>
+                    <button onclick="window.showLoginModalFromGlobal()" style="background:#088178; color:white; border:none; padding:10px 25px; border-radius:25px; cursor:pointer; margin-top:15px;">
+                        Login Now
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        if (blogPosts.length === 0) {
+            postsList.innerHTML = '<p style="text-align:center; padding:40px;">No posts yet. Create your first post!</p>';
+            return;
+        }
+        
+        postsList.innerHTML = blogPosts.map((post, index) => `
+            <div style="background:#f8f9fa; border-radius:10px; padding:15px; margin-bottom:12px; display:flex; gap:15px; align-items:center; border:1px solid #e9ecef;">
+                <img src="${escapeHtml(post.image)}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;" onerror="this.src='image/blog1.jpg'">
+                <div style="flex:1;">
+                    <h4 style="margin:0 0 5px; font-size:14px;">${escapeHtml(post.title.substring(0, 50))}${post.title.length > 50 ? '...' : ''}</h4>
+                    <p style="font-size:12px; color:#666; margin:0;">📅 ${escapeHtml(post.date)}</p>
+                    <p style="font-size:11px; color:#888; margin:5px 0 0;">${escapeHtml(post.description.substring(0, 60))}...</p>
+                </div>
+                <div>
+                    <button onclick="window.editPost(${index})" style="background:#088178; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:8px;">✏️ Edit</button>
+                    <button onclick="window.deletePost(${index})" style="background:#dc3545; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">🗑️ Delete</button>
+                </div>
+            </div>
+        `).join('');
     }
     
-    // Create new post
-    const createForm = document.getElementById('create-post-form');
-    if(createForm) {
-        createForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const title = document.getElementById('post-title').value;
-            const description = document.getElementById('post-description').value;
-            const image = document.getElementById('post-image').value;
-            const date = document.getElementById('post-date').value;
-            
-            if(!title || !description || !image || !date) {
-                alert('Please fill all fields');
-                return;
-            }
-            
-            blogPosts.unshift({title, description, image, date});
-            localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
+    // Global functions for buttons
+    window.editPost = function(index) {
+        if (!isLoggedIn) {
+            showToast('Please login first', 'error');
+            showLoginModal();
+            return;
+        }
+        
+        const post = blogPosts[index];
+        const newTitle = prompt('Edit Title:', post.title);
+        if (newTitle && newTitle.trim()) post.title = newTitle;
+        
+        const newDesc = prompt('Edit Description:', post.description);
+        if (newDesc && newDesc.trim()) post.description = newDesc;
+        
+        const newImage = prompt('Edit Image URL:', post.image);
+        if (newImage && newImage.trim()) post.image = newImage;
+        
+        const newDate = prompt('Edit Date (DD/MM):', post.date);
+        if (newDate && newDate.trim()) post.date = newDate;
+        
+        savePosts();
+        displayBlogPosts();
+        renderAdminPosts();
+        showToast('Post updated!', 'success');
+    };
+    
+    window.deletePost = function(index) {
+        if (!isLoggedIn) {
+            showToast('Please login first', 'error');
+            showLoginModal();
+            return;
+        }
+        
+        if (confirm('Delete this post permanently?')) {
+            blogPosts.splice(index, 1);
+            savePosts();
             displayBlogPosts();
-            displayAdminPosts();
-            createForm.reset();
-            alert('Post created!');
-        });
+            renderAdminPosts();
+            showToast('Post deleted!', 'success');
+        }
+    };
+    
+    function handleCreatePost(e) {
+        e.preventDefault();
+        
+        if (!isLoggedIn) {
+            showToast('Please login to create posts!', 'error');
+            showLoginModal();
+            return;
+        }
+        
+        const title = document.getElementById('post-title')?.value;
+        const description = document.getElementById('post-description')?.value;
+        const image = document.getElementById('post-image')?.value;
+        const date = document.getElementById('post-date')?.value;
+        
+        if (!title || !description || !image || !date) {
+            showToast('Please fill all fields', 'error');
+            return;
+        }
+        
+        const newPost = {
+            id: Date.now().toString(),
+            title: title,
+            description: description,
+            image: image,
+            date: date
+        };
+        
+        blogPosts.unshift(newPost);
+        savePosts();
+        displayBlogPosts();
+        renderAdminPosts();
+        document.getElementById('create-post-form').reset();
+        showToast('Post created successfully!', 'success');
     }
     
-    // Panel controls (slide from right)
-    const adminModal = document.getElementById('admin-modal');
-    const adminOverlay = document.getElementById('admin-overlay');
-    const adminIcon = document.getElementById('admin-icon');
-    const closeBtn = document.querySelector('.admin-close');
+    // ============================================
+    // LOGIN MODAL
+    // ============================================
+    window.showLoginModalFromGlobal = showLoginModal;
     
-    function openPanel() {
-        adminModal.style.display = 'block';
-        adminOverlay.style.display = 'block';
-        displayAdminPosts();
+    function showLoginModal() {
+        // Remove existing modal
+        const existingModal = document.querySelector('.custom-login-modal');
+        if (existingModal) existingModal.remove();
+        
+        const modal = document.createElement('div');
+        modal.className = 'custom-login-modal';
+        modal.innerHTML = `
+            <div class="login-modal-overlay2"></div>
+            <div class="login-modal-container2">
+                <div class="login-modal-header2">
+                    <div class="login-icon2">👑</div>
+                    <h2>Admin Login</h2>
+                    <p>Enter your credentials to manage blog posts</p>
+                    <button class="login-close-btn2">&times;</button>
+                </div>
+                <div class="login-modal-body2">
+                    <div class="login-error-msg2" style="display:none;"></div>
+                    <div class="login-input-group2">
+                        <label>Username</label>
+                        <input type="text" id="login-username2" placeholder="admin" autocomplete="off">
+                    </div>
+                    <div class="login-input-group2">
+                        <label>Password</label>
+                        <input type="password" id="login-password2" placeholder="••••••">
+                    </div>
+                    <button class="login-submit-btn2">Login to Dashboard</button>
+                    <p class="login-hint2">Hint: admin / 1234</p>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        const closeModal = () => modal.remove();
+        modal.querySelector('.login-close-btn2').onclick = closeModal;
+        modal.querySelector('.login-modal-overlay2').onclick = closeModal;
+        
+        const attemptLogin = () => {
+            const username = document.getElementById('login-username2').value;
+            const password = document.getElementById('login-password2').value;
+            const errorDiv = modal.querySelector('.login-error-msg2');
+            
+            if (username === ADMIN_USER && password === ADMIN_PASS) {
+                saveLoginSession();
+                closeModal();
+                showToast('Welcome Admin!', 'success');
+                // Open admin panel after login
+                const adminModal = document.getElementById('admin-modal');
+                const adminOverlay = document.getElementById('admin-overlay');
+                if (adminModal && adminOverlay) {
+                    adminModal.style.display = 'block';
+                    adminOverlay.style.display = 'block';
+                    renderAdminPosts();
+                    addLogoutButtonToPanel();
+                }
+            } else {
+                errorDiv.textContent = 'Wrong username or password! Use: admin / 1234';
+                errorDiv.style.display = 'block';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 3000);
+            }
+        };
+        
+        modal.querySelector('.login-submit-btn2').onclick = attemptLogin;
+        modal.querySelector('#login-password2').onkeypress = (e) => {
+            if (e.key === 'Enter') attemptLogin();
+        };
     }
     
-    function closePanel() {
-        adminModal.style.display = 'none';
-        adminOverlay.style.display = 'none';
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.className = `custom-toast2 toast-${type}2`;
+        toast.innerHTML = `
+            <div class="toast-content2">
+                <span class="toast-icon2">${type === 'success' ? '✓' : '✗'}</span>
+                <span>${message}</span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
     
-    if(adminIcon) {
-        adminIcon.onclick = openPanel;
+    // ============================================
+    // STYLES
+    // ============================================
+    function injectStyles() {
+        const styles = `
+            <style>
+                /* Login Modal */
+                .custom-login-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 100000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .login-modal-overlay2 {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.6);
+                }
+                .login-modal-container2 {
+                    position: relative;
+                    background: white;
+                    border-radius: 16px;
+                    width: 90%;
+                    max-width: 380px;
+                    animation: modalFadeIn2 0.3s ease;
+                    overflow: hidden;
+                }
+                @keyframes modalFadeIn2 {
+                    from { opacity: 0; transform: scale(0.9); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+                .login-modal-header2 {
+                    background: linear-gradient(135deg, #088178, #065c56);
+                    color: white;
+                    padding: 25px 20px;
+                    text-align: center;
+                    position: relative;
+                }
+                .login-icon2 {
+                    font-size: 45px;
+                    margin-bottom: 10px;
+                }
+                .login-modal-header2 h2 {
+                    margin: 0 0 5px;
+                    font-size: 22px;
+                }
+                .login-modal-header2 p {
+                    margin: 0;
+                    opacity: 0.9;
+                    font-size: 12px;
+                }
+                .login-close-btn2 {
+                    position: absolute;
+                    top: 12px;
+                    right: 15px;
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 26px;
+                    cursor: pointer;
+                }
+                .login-modal-body2 {
+                    padding: 24px;
+                }
+                .login-input-group2 {
+                    margin-bottom: 16px;
+                }
+                .login-input-group2 label {
+                    display: block;
+                    margin-bottom: 6px;
+                    font-weight: 600;
+                    font-size: 13px;
+                    color: #333;
+                }
+                .login-input-group2 input {
+                    width: 100%;
+                    padding: 10px 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    font-size: 14px;
+                }
+                .login-input-group2 input:focus {
+                    outline: none;
+                    border-color: #088178;
+                }
+                .login-error-msg2 {
+                    background: #fee2e2;
+                    color: #dc2626;
+                    padding: 10px;
+                    border-radius: 8px;
+                    margin-bottom: 16px;
+                    font-size: 12px;
+                }
+                .login-submit-btn2 {
+                    width: 100%;
+                    padding: 12px;
+                    background: #088178;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-top: 5px;
+                }
+                .login-submit-btn2:hover {
+                    background: #065c56;
+                }
+                .login-hint2 {
+                    text-align: center;
+                    margin-top: 15px;
+                    font-size: 11px;
+                    color: #999;
+                }
+                
+                /* Toast */
+                .custom-toast2 {
+                    position: fixed;
+                    bottom: 30px;
+                    right: 30px;
+                    z-index: 100000;
+                    transform: translateX(400px);
+                    transition: transform 0.3s ease;
+                }
+                .custom-toast2.show {
+                    transform: translateX(0);
+                }
+                .toast-content2 {
+                    background: white;
+                    padding: 10px 18px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                }
+                .toast-success2 {
+                    border-left: 3px solid #2ecc71;
+                }
+                .toast-error2 {
+                    border-left: 3px solid #e74c3c;
+                }
+                .toast-icon2 {
+                    font-weight: bold;
+                }
+                .toast-success2 .toast-icon2 {
+                    color: #2ecc71;
+                }
+                .toast-error2 .toast-icon2 {
+                    color: #e74c3c;
+                }
+            </style>
+        `;
+        document.head.insertAdjacentHTML('beforeend', styles);
     }
     
-    if(closeBtn) {
-        closeBtn.onclick = closePanel;
-    }
-    
-    if(adminOverlay) {
-        adminOverlay.onclick = closePanel;
-    }
-    
-    // Tab switching
-    const tabBtns = document.querySelectorAll('.admin-tab-btn');
-    const tabContents = document.querySelectorAll('.admin-tab-content');
-    
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active-tab'));
-            this.classList.add('active');
-            document.getElementById(tabId).classList.add('active-tab');
-        });
-    });
-    
-    // Initial display
-    displayBlogPosts();
+    // Start everything
+    init();
 });
 
-// ========== SIMPLE CART SYSTEM - SAFE VERSION ==========
-// This version will NOT break your existing functionality
+// Also keep your existing product and cart code here...
+// (Your existing products, cart, contact form, etc. code continues below)
+// CART SYSTEM - 
 
-// Wait for everything to load first
 window.addEventListener('load', function() {
     
     // Get cart from storage
@@ -758,11 +1156,11 @@ window.addEventListener('load', function() {
         }
     }
     
-    // Keep trying to attach the button (in case lightbox loads late)
+    // Keep trying to attach the button 
     attachButton();
     setInterval(attachButton, 500);
     
-    // ========== CART PAGE DISPLAY ==========
+    //  CART PAGE DISPLAY 
     if (window.location.pathname.includes('cart.html')) {
         displayCart();
     }
@@ -822,7 +1220,6 @@ window.addEventListener('load', function() {
         displayCart();
     };
     
-    // Fix: Make sure your existing product loading still works
     console.log('Cart system loaded - products should display normally');
     
 });
@@ -944,17 +1341,12 @@ if (checkoutBtn) {
             // Success message
             alert(` Order placed successfully!\n\nTotal: ${totalAmount}\n\nThank you for shopping with us!`);
             
-            // Optional: Redirect to checkout page
-            // window.location.href = "checkout.html";
             
-            // Optional: Clear cart after checkout
-            // cartItems.forEach(row => row.remove());
-            // updateTotal(0);
         }
     });
 }
 
-// Contact Form - Save ALL messages to ONE file
+// Contact Form 
 const contactForm = document.querySelector('.Form-details form');
 if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
@@ -1056,7 +1448,7 @@ if (document.querySelector('.Form-details')) {
     setTimeout(addDownloadButton, 100);
 }
 
-// ========== SIGN UP / LOGIN SYSTEM ==========
+//  SIGN UP / LOGIN SYSTEM 
 
 // Function to check login status and update icon
 function updateIconStatus() {
