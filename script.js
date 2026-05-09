@@ -954,6 +954,108 @@ if (checkoutBtn) {
     });
 }
 
+// Contact Form - Save ALL messages to ONE file
+const contactForm = document.querySelector('.Form-details form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const name = contactForm.querySelector('input[placeholder="Name"]')?.value || '';
+        const email = contactForm.querySelector('input[placeholder="E-mail"]')?.value || '';
+        const subject = contactForm.querySelector('input[placeholder="Subject"]')?.value || '';
+        const message = contactForm.querySelector('textarea[placeholder="Your Message"]')?.value || '';
+        const date = new Date().toLocaleString();
+        
+        // Get existing messages from localStorage
+        let allMessages = localStorage.getItem('allContactMessages') || '';
+        
+        // Add new message
+        const newMessage = `
+========================================
+NEW MESSAGE - ${date}
+========================================
+Name: ${name}
+Email: ${email}
+Subject: ${subject}
+Message: ${message}
+----------------------------------------
+        `;
+        
+        allMessages += newMessage;
+        
+        // Save to localStorage
+        localStorage.setItem('allContactMessages', allMessages);
+        
+        // Also save count
+        let messageCount = parseInt(localStorage.getItem('messageCount') || '0');
+        messageCount++;
+        localStorage.setItem('messageCount', messageCount);
+        
+        // Clear form
+        contactForm.reset();
+        
+        // Show confirmation
+        alert(`✓ Message #${messageCount} saved! Download the file to see all messages.`);
+    });
+}
+
+// Function to download ALL messages (add a button for this)
+function downloadAllMessages() {
+    const allMessages = localStorage.getItem('allContactMessages');
+    
+    if (!allMessages || allMessages.trim() === '') {
+        alert('No messages yet!');
+        return;
+    }
+    
+    const messageCount = localStorage.getItem('messageCount') || '0';
+    const date = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+    
+    const header = `CONTACT FORM MESSAGES
+Total Messages: ${messageCount}
+Last Updated: ${new Date().toLocaleString()}
+========================================\n`;
+    
+    const blob = new Blob([header + allMessages], {type: 'text/plain'});
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.href = url;
+    link.download = `all-contact-messages-${date}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    alert(`Downloaded ${messageCount} messages!`);
+}
+
+// Add a "Download All Messages" button to your page
+function addDownloadButton() {
+    const formSection = document.querySelector('.Form-details');
+    if (formSection && !document.querySelector('#downloadMessagesBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'downloadMessagesBtn';
+        btn.textContent = '📥 Download All Messages';
+        btn.className = 'normal';
+        btn.style.marginTop = '20px';
+        btn.style.background = '#088178';
+        btn.onclick = downloadAllMessages;
+        
+        // Insert after the form
+        const form = formSection.querySelector('form');
+        if (form) {
+            form.after(btn);
+        }
+    }
+}
+
+// Add button when page loads
+if (document.querySelector('.Form-details')) {
+    setTimeout(addDownloadButton, 100);
+}
+
 // ========== SIGN UP / LOGIN SYSTEM ==========
 
 // Function to check login status and update icon
